@@ -1,0 +1,8 @@
+@use './../../styles/variables' as *;
+
+.header {
+    background-color: $secondary-color;
+    padding: 2vw;
+    display: flex;
+    justify-content: center;
+}

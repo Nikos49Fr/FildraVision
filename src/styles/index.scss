@@ -1,0 +1,55 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+@use 'fonts';
+@use 'reset';
+
+:root {
+    --font-title: 'Singing Sans', system-ui, sans-serif;
+    --font-body: 'Neulis Neue', system-ui, sans-serif;
+    --weight-title: 500;
+    --weight-body: 600;
+}
+
+body {
+    font-family: var(--font-body);
+    font-weight: var(--weight-body);
+    color: $primary-color;
+    background: radial-gradient(
+            120% 150% at 90% -3%,
+            #20f,
+            #000c54 22.49%,
+            #010a41 33.26% 64.14%,
+            #4c0a54 85.82%,
+            #ff0178
+        )
+        0 0 / cover fixed;
+    line-height: 1;
+    min-width: 360px;
+    max-width: 1920px;
+    margin: 0;
+    margin: auto;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: var(--font-title);
+    font-weight: var(--weight-title);
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+    outline: 2px solid $secondary-color;
+    outline-offset: 2px;
+}
+
+@media (max-width: 1024px) {
+}
+
+@media (max-width: 768px) {
+}

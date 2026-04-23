@@ -1,0 +1,46 @@
+@use './../../styles/variables' as *;
+@use './../../styles/mixins' as *;
+
+.main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    gap: 2cqw;
+    margin: 2cqw;
+    text-align: center;
+    color: $primary-color;
+}
+
+.fildraen-link {
+    display: flex;
+    align-items: center;
+    gap: 2cqw;
+    background-color: $secondary-color;
+    padding: 1cqw 2cqw;
+    border-radius: 1.5cqw;
+    @include drop-shadow();
+
+    &__logo {
+        border-radius: 100cqw;
+        width: 3cqw;
+    }
+    &__twitch-link {
+        font-size: 1.5cqw;
+        color: $twitch-color;
+        scale: 1;
+        transition-property: scale, color;
+        transition: all ease-in-out 0.2s;
+
+        &:hover {
+            scale: 1.05;
+            color: $twitch-color-accent;
+        }
+    }
+    &__twitch-icon {
+        width: 2cqw;
+        height: 2cqw;
+        color: $twitch-color-accent;
+    }
+}
+

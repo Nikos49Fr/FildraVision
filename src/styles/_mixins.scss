@@ -1,0 +1,11 @@
+@mixin responsive-width($values) {
+    @each $breakpoint, $width in $values {
+        @media (max-width: $breakpoint) {
+            width: $width;
+        }
+    }
+}
+
+@mixin drop-shadow{
+    filter: drop-shadow(1cqw 1cqw 1cqw #101);
+}

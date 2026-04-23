@@ -1,0 +1,116 @@
+@use './../../styles/variables' as *;
+@use './../../styles/mixins' as *;
+
+.artistCard {
+    font-size: 2cqw;
+    color: $primary-color;
+    @include drop-shadow();
+    position: relative;
+    container-type: inline-size;
+
+    aspect-ratio: 640 / 960;
+    width: calc((100cqw - 14cqw) / 6);
+    @include responsive-width(
+        (
+            1440px: calc((100cqw - 12cqw) / 5),
+            1280px: calc((100cqw - 10cqw) / 4),
+            1024px: calc((100cqw - 8cqw) / 3),
+            768px: calc((100cqw - 6cqw) / 2),
+            540px: calc(100cqw - 4cqw),
+        )
+    );
+
+    scale: 1;
+    z-index: 0;
+    transition-property: scale, z-index;
+    transition: ease-in-out 0.2s;
+
+    &:hover {
+        scale: 1.1;
+        z-index: 10;
+    }
+
+    .wrapper {
+        width: 100%;
+        max-width: 100%;
+        position: absolute;
+    }
+
+    &__singer {
+        overflow: hidden;
+        border-radius: 4cqw;
+
+        & img {
+            object-fit: cover;
+            max-width: 100%;
+        }
+        &::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 4cqw;
+            background: linear-gradient(
+                to bottom,
+                rgba(0, 0, 0, 0) 50%,
+                rgba(0, 0, 0, 1) 100%
+            );
+        }
+    }
+
+    &__content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-end;
+        position: absolute;
+        bottom: 0;
+        width: 94cqw;
+        margin: 3cqw;
+        margin-bottom: 12cqw;
+        gap: 6cqw;
+    }
+    & .artist {
+        color: #fff;
+        font-family: var(--font-title);
+        font-size: 10cqw;
+        font-weight: 500;
+        text-align: center;
+    }
+
+    & .song,
+    & .country {
+        display: flex;
+        align-items: center;
+        position: relative;
+        border-radius: 100cqw;
+    }
+    & .song {
+        background-color: $secondary-color;
+        color: $primary-color;
+        padding: 2cqw 4cqw 2cqw;
+        padding-left: 10cqw;
+        font-size: 6cqw;
+        margin-bottom: 2cqw;
+
+        & .music-icon {
+            max-width: 8cqw;
+            position: absolute;
+            left: 1cqw;
+        }
+    }
+    & .country {
+        background-color: $primary-color;
+        color: $secondary-color;
+        padding: 1cqw 4cqw 0.5cqw;
+        padding-left: 8cqw;
+        font-size: 6cqw;
+
+        & .flag-icon {
+            max-width: 12cqw;
+            position: absolute;
+            top: -2.5cqw;
+            left: -4cqw;
+            z-index: 100;
+        }
+    }
+}

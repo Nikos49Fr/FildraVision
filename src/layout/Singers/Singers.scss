@@ -1,0 +1,11 @@
+@use './../../styles/mixins' as *;
+
+.main-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2cqw;
+    margin: 2cqw;
+    container-type: inline-size;
+    max-width: 100%;
+}
