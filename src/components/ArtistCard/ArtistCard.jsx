@@ -42,8 +42,6 @@ export default function ArtistCard({ country }) {
                         />
                         <div>{country.name}</div>
                     </div>
-                    {/* <div className="artistCard__wrapper">
-                    </div> */}
                 </div>
             </div>
         </article>

@@ -13,17 +13,8 @@
 body {
     font-family: var(--font-body);
     font-weight: var(--weight-body);
-    color: $primary-color;
-    background: radial-gradient(
-            120% 150% at 90% -3%,
-            #20f,
-            #000c54 22.49%,
-            #010a41 33.26% 64.14%,
-            #4c0a54 85.82%,
-            #ff0178
-        )
-        0 0 / cover fixed;
-    line-height: 1;
+    color: $secondary-color;
+    background-color: $primary-color;
     min-width: 360px;
     max-width: 1920px;
     margin: 0;

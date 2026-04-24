@@ -1,8 +1,65 @@
 @use './../../styles/variables' as *;
+@use './../../styles/mixins' as *;
 
 .header {
-    background-color: $secondary-color;
-    padding: 2vw;
+    background: radial-gradient(
+            130% 40% at 100% 0%,
+            #20f,
+            #000c54 25%,
+            #010a41 35% 65%,
+            #4c0a54 85%,
+            #ff0178
+        )
+        0 0 / cover fixed;
+    padding: 1vw;
+    padding-right: 2vw;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
+    align-items: center;
+    gap: 5vw;
+    @include drop-shadow();
+
+    &__logo {
+        aspect-ratio: 410 / 176;
+        min-width: 15vw;
+        max-width: 15vw;
+
+        &--small {
+            display: none;
+        }
+    }
+    &__caroussel {
+        min-width: 58vw;
+        max-width: 58vw;
+    }
+    &__nav {
+        min-width: 14vw;
+        max-width: 14vw;
+    }
+}
+
+@media (max-width: 768px) {
+    .header {
+        padding-right: 5vw;
+        &__logo {
+            aspect-ratio: unset;
+            min-width: 10vw;
+            max-width: 10vw;
+            padding: 1vw;
+            &--small {
+                display: block;
+            }
+            &--big {
+                display: none;
+            }
+        }
+        &__caroussel {
+            min-width: 55vw;
+            max-width: 55vw;
+        }
+        &__nav {
+            min-width: 19vw;
+            max-width: 19vw;
+        }
+    }
 }
