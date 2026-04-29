@@ -7,7 +7,6 @@ import {
     logout,
     subscribeToAuthChanges,
 } from '../../services/auth';
-import { upsertProfileFromUser } from '../../services/profiles';
 import { isSupabaseConfigured } from '../../services/supabaseClient';
 
 function getDisplayName(user) {
@@ -44,20 +43,6 @@ export default function AuthWidget() {
 
         let isMounted = true;
 
-        async function syncProfile(currentUser) {
-            if (!currentUser) {
-                return;
-            }
-
-            try {
-                await upsertProfileFromUser(currentUser);
-            } catch (error) {
-                if (isMounted) {
-                    setErrorMessage(error.message);
-                }
-            }
-        }
-
         async function loadUser() {
             try {
                 const currentUser = await getCurrentUser();
@@ -65,8 +50,6 @@ export default function AuthWidget() {
                 if (isMounted) {
                     setUser(currentUser);
                 }
-
-                await syncProfile(currentUser);
             } catch (error) {
                 if (isMounted) {
                     setErrorMessage(error.message);
@@ -92,7 +75,6 @@ export default function AuthWidget() {
             setUser(currentUser);
             setErrorMessage('');
             setLoading(false);
-            void syncProfile(currentUser);
         });
 
         return () => {

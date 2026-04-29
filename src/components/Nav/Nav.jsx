@@ -1,7 +1,10 @@
 import { NavLink } from 'react-router';
 import './Nav.scss';
+import { useProfile } from '../../context/profileContext';
 
 export default function Nav() {
+    const profile = useProfile();
+
     return (
         <div className="nav">
             <NavLink
@@ -30,6 +33,19 @@ export default function Nav() {
             >
                 Voter
             </NavLink>
+            {profile?.is_admin ? (
+                <NavLink
+                    to="/admin"
+                    end
+                    className={({ isActive }) =>
+                        isActive ? 'nav__link nav__link--active' : 'nav__link'
+                    }
+                >
+                    Admin
+                </NavLink>
+            ) : (
+                ''
+            )}
         </div>
     );
 }

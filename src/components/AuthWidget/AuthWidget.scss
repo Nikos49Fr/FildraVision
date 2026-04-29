@@ -1,4 +1,5 @@
 @use './../../styles/variables' as *;
+@use './../../styles/mixins' as *;
 
 .auth-widget {
     position: fixed;
@@ -13,6 +14,8 @@
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
     backdrop-filter: blur(10px);
     font-size: 1rem;
+
+    @include drop-shadow();
 
     display: flex;
     align-items: center;

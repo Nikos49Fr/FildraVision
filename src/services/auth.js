@@ -6,10 +6,10 @@ function getAuthRedirectUrl() {
         window.location.hostname === '127.0.0.1';
 
     if (isLocalhost) {
-        return `${window.location.origin}/`;
+        return window.location.href;
     }
 
-    return new URL(import.meta.env.BASE_URL, window.location.origin).toString();
+    return new URL(import.meta.env.BASE_URL, window.location.href).toString();
 }
 
 export async function getCurrentUser() {
@@ -25,7 +25,7 @@ export async function getCurrentUser() {
 
 export async function loginWithTwitch() {
     const supabase = requireSupabase();
-    const { data, error } = await supabase.auth.signInWithOAuth({
+    const { error } = await supabase.auth.signInWithOAuth({
         provider: 'twitch',
         options: {
             redirectTo: getAuthRedirectUrl(),
@@ -35,8 +35,6 @@ export async function loginWithTwitch() {
     if (error) {
         throw error;
     }
-
-    return data;
 }
 
 export async function logout() {
