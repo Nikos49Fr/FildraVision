@@ -1,15 +1,13 @@
-import { Routes, Route, Navigate } from 'react-router';
+import { Routes, Route } from 'react-router';
 import Header from './layout/Header/Header';
 import Home from './layout/Home/Home';
 import Singers from './layout/Singers/Singers';
 import Vote from './layout/Vote/Vote';
 import Admin from './layout/Admin/Admin';
 import AuthWidget from './components/AuthWidget/AuthWidget';
-import { useProfile } from './context/profileContext';
+import { ProtectedAdminRoute } from './utils/ProtectedAdminRoute/ProtectedAdminRoute';
 
 export default function App() {
-    const profile = useProfile();
-
     return (
         <>
             <Header />
@@ -20,11 +18,9 @@ export default function App() {
                 <Route
                     path="/admin"
                     element={
-                        profile?.is_admin ? (
+                        <ProtectedAdminRoute>
                             <Admin />
-                        ) : (
-                            <Navigate to="/" replace />
-                        )
+                        </ProtectedAdminRoute>
                     }
                 />
                 <Route path="*" element={<Home />} />

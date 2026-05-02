@@ -1,6 +1,52 @@
-
-
 .main {
-    
     margin-bottom: 60px;
+}
+
+.gradient-div {
+    display: flex;
+
+    & div {
+        height: 200px;
+        width: 20%;
+    }
+
+    &__origin {
+        background: linear-gradient(
+            90deg,
+            #0334de99 15%,
+            #7a33d850 40%,
+            #af33d550 65%,
+            #f0f6 100%
+        );
+    }
+    &__gradOne {
+        background: linear-gradient(
+            90deg,
+            #1c4fe0 0%,
+            #304fd2 18%,
+            #4a3fa8 42%,
+            #6a2f98 68%,
+            #a80fb4 100%
+        );
+    }
+    &__gradTwo {
+        background: linear-gradient(
+            90deg,
+            #2458e6 0%,
+            #3756dc 16%,
+            #5147b8 40%,
+            #74339f 67%,
+            #b10ab8 100%
+        );
+    }
+    &__gradThree {
+        background: linear-gradient(
+            90deg,
+            #2b60df 0%,
+            #3f59d3 20%,
+            #5749b0 45%,
+            #73379c 70%,
+            #a61aae 100%
+        );
+    }
 }

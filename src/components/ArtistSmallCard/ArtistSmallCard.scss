@@ -1,0 +1,97 @@
+@use './../../styles/variables' as *;
+@use './../../styles/mixins' as *;
+
+[data-drag-overlay='true'] .smallCard {
+    transform: scale(1.03);
+    @include drop-shadow();
+    border-radius: 16px;
+
+    &__wrapper::before {
+        content: '';
+        position: absolute;
+        opacity: 1;
+        inset: 0;
+        border-radius: 16px;
+        background: linear-gradient(
+            90deg,
+            #2458e6 0%,
+            #3756dc 16%,
+            #5147b8 40%,
+            #74339f 67%,
+            #b10ab8 100%
+        );
+    }
+}
+
+.smallCard {
+    color: $primary-color;
+    @include drop-shadow();
+
+    transform: scale(1);
+    transition:
+        transform 180ms ease-in-out,
+        box-shadow 180ms ease-in-out;
+
+    &__wrapper {
+        display: flex;
+        gap: 0.5vw;
+        padding: 0.8vw;
+        padding-left: 1.5vw;
+        width: 100%;
+        max-width: 100%;
+        background: linear-gradient(
+            90deg,
+            #0334de99 15%,
+            #7a33d850 40%,
+            #af33d550 65%,
+            #f0f6 100%
+        );
+        border-radius: 16px;
+        container-type: inline-size;
+        position: relative;
+        &::before {
+            opacity: 0;
+            transition: opacity 180ms ease-in-out;
+        }
+    }
+
+    .icon {
+        max-width: 5cqw;
+        position: absolute;
+        left: 1cqw;
+    }
+
+    &__country,
+    &__artist,
+    &__song {
+        display: flex;
+        align-items: center;
+        position: relative;
+        border-radius: 999px;
+        background-color: $secondary-color;
+        font-size: 2.5cqw;
+        padding: 1cqw 2cqw;
+        padding-left: 8cqw;
+    }
+    &__country {
+        color: $secondary-color;
+        background-color: $primary-color;
+        padding: 1cqw 4cqw 0.5cqw;
+        padding-left: 6cqw;
+
+        & .flag-icon {
+            max-width: 9cqw;
+            top: -2cqw;
+            left: -3cqw;
+            z-index: 100;
+        }
+    }
+
+    &__artist {
+        font-family: var(--font-title);
+        font-weight: 500;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+}

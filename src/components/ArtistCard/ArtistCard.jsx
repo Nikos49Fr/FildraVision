@@ -2,12 +2,12 @@ import './ArtistCard.scss';
 import MicroIcon from '../../assets/logos/microphone.svg?react';
 import MusicIcon from '../../assets/logos/music.svg?react';
 
-export default function ArtistCard({ country }) {
-    const flags = import.meta.glob('/src/assets/flags/*.svg', { eager: true });
-    const singers = import.meta.glob('/src/assets/singers/*.webp', {
-        eager: true,
-    });
+const flags = import.meta.glob('/src/assets/flags/*.svg', { eager: true });
+const singers = import.meta.glob('/src/assets/singers/*.webp', {
+    eager: true,
+});
 
+export default function ArtistCard({ country }) {
     const flag =
         flags[`/src/assets/flags/flag_${country.code.toLowerCase()}.svg`]
             ?.default;

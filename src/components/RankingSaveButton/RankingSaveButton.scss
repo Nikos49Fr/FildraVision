@@ -1,0 +1,60 @@
+@use './../../styles/mixins' as *;
+
+.rankingSaveButton {
+    border: 0;
+    border-radius: 16px;
+    padding: 1rem 1.4rem;
+    min-width: 14rem;
+    font: inherit;
+    font-weight: 700;
+    line-height: 1.1;
+    text-align: center;
+    transition:
+        background-color 180ms ease-in-out,
+        color 180ms ease-in-out,
+        transform 180ms ease-in-out,
+        box-shadow 180ms ease-in-out;
+    @include drop-shadow();
+
+    &:focus-visible {
+        outline: 2px solid #fff;
+        outline-offset: 3px;
+    }
+
+    &:not(:disabled) {
+        cursor: pointer;
+
+        &:hover {
+            transform: translateY(-1px);
+        }
+    }
+
+    &:disabled {
+        cursor: default;
+    }
+
+    &--empty {
+        background-color: #d9b11e;
+        color: #1b1b1b;
+    }
+
+    &--dirty {
+        background-color: #e09a1a;
+        color: #1b1b1b;
+    }
+
+    &--saved {
+        background-color: #2e9b57;
+        color: #fff;
+    }
+
+    &--saving {
+        background-color: #7f8794;
+        color: #fff;
+    }
+
+    &--error {
+        background-color: #d64545;
+        color: #fff;
+    }
+}

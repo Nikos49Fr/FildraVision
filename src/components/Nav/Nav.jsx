@@ -3,7 +3,7 @@ import './Nav.scss';
 import { useProfile } from '../../context/profileContext';
 
 export default function Nav() {
-    const profile = useProfile();
+    const { profile } = useProfile();
 
     return (
         <div className="nav">

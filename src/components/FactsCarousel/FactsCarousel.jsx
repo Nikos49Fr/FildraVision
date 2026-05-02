@@ -1,8 +1,8 @@
-import './FactsCaroussel.scss';
-import { facts } from './../../datas/facts';
+import './FactsCarousel.scss';
+import { facts } from '../../datas/facts';
 import { useEffect, useState } from 'react';
 
-export default function FactsCaroussel() {
+export default function FactsCarousel() {
     const numberOfFacts = facts.length;
     const [factIndex, setFactIndex] = useState(0);
 
@@ -15,25 +15,21 @@ export default function FactsCaroussel() {
     }, []);
 
     return (
-        <div className="caroussel">
+        <div className="carousel">
             {facts.map((fact, index) => (
                 <div
                     key={index}
-                    className={`caroussel__facts${index === factIndex ? ' display' : ' hide'}`}
+                    className={`carousel__facts${index === factIndex ? ' display' : ' hide'}`}
                 >
-                    <h2 className="caroussel__title">Le saviez-vous ?</h2>
-                    <h3 className="caroussel__shortFact">
-                        {facts[index].shortFact}
-                    </h3>
-                    <p className="caroussel__longFact">
-                        {facts[index].longFact}
-                    </p>
+                    <h2 className="carousel__title">Le saviez-vous ?</h2>
+                    <h3 className="carousel__shortFact">{fact.shortFact}</h3>
+                    <p className="carousel__longFact">{fact.longFact}</p>
                 </div>
             ))}
-            <div className="caroussel__pagination">
-                {facts.map((fact, index) => (
+            <div className="carousel__pagination">
+                {facts.map((_, index) => (
                     <input
-                        className={`caroussel__dot ${index === factIndex ? 'caroussel__dot--selected' : ''}`}
+                        className={`carousel__dot ${index === factIndex ? 'carousel__dot--selected' : ''}`}
                         type="radio"
                         key={index}
                         name="radio-button"

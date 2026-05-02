@@ -1,4 +1,4 @@
-export const countries = [
+export const allParticipants = [
     { code: 'AL', name: 'Albanie', artist: 'Alis', song: 'Nân' },
     { code: 'AM', name: 'Arménie', artist: 'SIMÓN', song: 'Paloma Rumba' },
     { code: 'AU', name: 'Australie', artist: 'Delta Goodrem', song: 'Eclipse' },
@@ -91,9 +91,9 @@ export const countries = [
     },
 ];
 
-export const finalDirect = ['AT', 'FR', 'DE', 'IT', 'GB'];
+export const finalParticipants = ['AT', 'FR', 'DE', 'IT', 'GB'];
 
-export const semiFinal1 = [
+export const semiFinal1Participants = [
     'MD',
     'SE',
     'HR',
@@ -111,7 +111,7 @@ export const semiFinal1 = [
     'RS',
 ];
 
-export const semiFinal2 = [
+export const semiFinal2Participants = [
     'BG',
     'AZ',
     'RO',

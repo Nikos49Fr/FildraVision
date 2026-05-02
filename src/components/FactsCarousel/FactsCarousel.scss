@@ -1,6 +1,6 @@
 @use './../../styles/variables' as *;
 
-.caroussel {
+.carousel {
     color: $primary-color;
     display: flex;
     flex-direction: column;
@@ -60,7 +60,7 @@
 }
 
 @media (max-width: 1024px) {
-    .caroussel {
+    .carousel {
         &__dot {
             width: 10px;
             height: 10px;
@@ -78,7 +78,7 @@
     }
 }
 @media (max-width: 768px) {
-    .caroussel {
+    .carousel {
         min-height: 145px;
         &__dot {
             width: 8px;

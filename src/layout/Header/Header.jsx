@@ -2,7 +2,7 @@ import './Header.scss';
 import eurovisionLogo from './../../assets/logos/eurovision-logo.png';
 import EurovisionSmallLogo from './../../assets/flags/flag_at.svg?react';
 import Nav from '../../components/Nav/Nav';
-import FactsCaroussel from '../../components/FactsCaroussel/FactsCaroussel';
+import FactsCarousel from '../../components/FactsCarousel/FactsCarousel';
 
 export default function Header() {
     return (
@@ -15,8 +15,8 @@ export default function Header() {
                 />
                 <EurovisionSmallLogo className="header__logo--small" />
             </div>
-            <div className="header__caroussel">
-                <FactsCaroussel />
+            <div className="header__carousel">
+                <FactsCarousel />
             </div>
             <div className="header__nav">
                 <Nav />

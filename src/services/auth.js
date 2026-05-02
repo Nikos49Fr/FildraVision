@@ -1,26 +1,21 @@
 import { requireSupabase } from './supabaseClient';
 
 function getAuthRedirectUrl() {
-    const isLocalhost =
-        window.location.hostname === 'localhost' ||
-        window.location.hostname === '127.0.0.1';
-
-    if (isLocalhost) {
-        return window.location.href;
-    }
-
-    return new URL(import.meta.env.BASE_URL, window.location.href).toString();
+    return window.location.href;
 }
 
 export async function getCurrentUser() {
     const supabase = requireSupabase();
-    const { data, error } = await supabase.auth.getUser();
+    const {
+        data: { user },
+        error,
+    } = await supabase.auth.getUser();
 
     if (error) {
         throw error;
     }
 
-    return data.user;
+    return user;
 }
 
 export async function loginWithTwitch() {
