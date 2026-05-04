@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <title>FildraVision</title>
+    <script>
+      const pathSegmentsToKeep = 1;
+      const { protocol, hostname, port, pathname, search, hash } = window.location;
+      const basePath = pathname
+        .split('/')
+        .slice(0, 1 + pathSegmentsToKeep)
+        .join('/');
+
+      const routePath = pathname
+        .slice(1)
+        .split('/')
+        .slice(pathSegmentsToKeep)
+        .join('/');
+
+      const query = search ? `&${search.slice(1).replace(/&/g, '~and~')}` : '';
+      const redirectUrl =
+        `${protocol}//${hostname}${port ? `:${port}` : ''}` +
+        `${basePath}/?/${routePath.replace(/&/g, '~and~')}${query}${hash}`;
+
+      window.location.replace(redirectUrl);
+    </script>
+  </head>
+  <body></body>
+</html>
