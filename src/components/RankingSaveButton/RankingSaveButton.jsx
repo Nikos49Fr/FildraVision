@@ -1,97 +1,73 @@
 import './RankingSaveButton.scss';
-import CloudSaved from '../../assets/logos/cloud-check-saved.svg?react';
-import CloudSynchro from '../../assets/logos/cloud-arrow-rotate-synchro.svg?react';
-import CloudError from '../../assets/logos/cloud-xmark-error.svg?react';
-import CloudUpdate from '../../assets/logos/cloud-arrow-up-update.svg?react';
+import {
+    RANKING_SAVE_STATUSES,
+    DEFAULT_RANKING_SAVE_LABELS,
+    DEFAULT_RANKING_SAVE_HELP_LABELS,
+    DEFAULT_RANKING_SAVE_HELP_ICONS,
+    DEFAULT_ACTIONABLE_RANKING_SAVE_STATUSES,
+} from '../../utils/helpers/rankingSaveStatus';
 
-export const RANKING_SAVE_STATUSES = {
-    empty: 'empty',
-    dirty: 'dirty',
-    saved: 'saved',
-    saving: 'saving',
-    error: 'error',
-};
-
-const DEFAULT_LABELS = {
-    [RANKING_SAVE_STATUSES.empty]: '→ Sauvegarder',
-    [RANKING_SAVE_STATUSES.dirty]: '→ Mettre à jour',
-    [RANKING_SAVE_STATUSES.saved]: 'Sauvegardé',
-    [RANKING_SAVE_STATUSES.saving]: 'Sauvegarde en cours...',
-    [RANKING_SAVE_STATUSES.error]: 'Erreur. Réessaie.',
-};
-
-const DEFAULT_HELP_LABELS = {
-    [RANKING_SAVE_STATUSES.empty]: 'Classement non sauvegardé.',
-    [RANKING_SAVE_STATUSES.dirty]:
-        'Des modifications ne sont pas enregistrées.',
-    [RANKING_SAVE_STATUSES.saved]: 'Le classement est bien sauvegardé',
-    [RANKING_SAVE_STATUSES.saving]: 'Sauvegarde en cours...',
-    [RANKING_SAVE_STATUSES.error]:
-        "Une erreur s'est produite. Actualise la page et réessaie de soumettre ton classement.",
-};
-
-const DEFAULT_HELP_ICONS = {
-    [RANKING_SAVE_STATUSES.empty]: CloudError,
-    [RANKING_SAVE_STATUSES.dirty]: CloudSynchro,
-    [RANKING_SAVE_STATUSES.saved]: CloudSaved,
-    [RANKING_SAVE_STATUSES.saving]: CloudUpdate,
-    [RANKING_SAVE_STATUSES.error]: CloudError,
-};
-
-const DISABLED_STATUSES = new Set([
-    RANKING_SAVE_STATUSES.saved,
-    RANKING_SAVE_STATUSES.saving,
-    RANKING_SAVE_STATUSES.error,
-]);
+const RESOLVED_STATUSES = new Set(Object.values(RANKING_SAVE_STATUSES));
 
 export default function RankingSaveButton({
     status = RANKING_SAVE_STATUSES.empty,
     onClick,
     className = '',
-    labels = DEFAULT_LABELS,
-    helper_labels = DEFAULT_HELP_LABELS,
-    helper_icons = DEFAULT_HELP_ICONS,
+    labels = DEFAULT_RANKING_SAVE_LABELS,
+    helperLabels = DEFAULT_RANKING_SAVE_HELP_LABELS,
+    helperIcons = DEFAULT_RANKING_SAVE_HELP_ICONS,
+    actionableStatuses = DEFAULT_ACTIONABLE_RANKING_SAVE_STATUSES,
 }) {
-    const resolvedStatus = DEFAULT_LABELS[status]
+    const resolvedStatus = RESOLVED_STATUSES.has(status)
         ? status
         : RANKING_SAVE_STATUSES.empty;
-    const isDisabled = DISABLED_STATUSES.has(resolvedStatus);
+    const isActionVisible = actionableStatuses.includes(resolvedStatus);
+    const rootClassName = ['rankingSave', className].filter(Boolean).join(' ');
     const buttonClassName = [
         'rankingSave__button',
         `rankingSave__button--${resolvedStatus}`,
-        className,
     ]
         .filter(Boolean)
         .join(' ');
     const iconClassName = [
         'rankingSave__icon',
         `rankingSave__icon--${resolvedStatus}`,
-        className,
     ]
         .filter(Boolean)
         .join(' ');
 
-    const HelperIcon = helper_icons[resolvedStatus];
+    const HelperIcon = helperIcons[resolvedStatus];
 
     return (
-        <div className="rankingSave">
-            {HelperIcon ? <HelperIcon className={iconClassName} /> : null}
-            <div className="rankingSave__helper">
-                {helper_labels[resolvedStatus]}
+        <div
+            className={rootClassName}
+            aria-busy={resolvedStatus === RANKING_SAVE_STATUSES.saving}
+        >
+            {HelperIcon ? (
+                <HelperIcon
+                    className={iconClassName}
+                    aria-hidden="true"
+                    focusable="false"
+                />
+            ) : null}
+            <div
+                className="rankingSave__helper"
+                role="status"
+                aria-live="polite"
+                aria-atomic="true"
+            >
+                {helperLabels[resolvedStatus]}
             </div>
-            {isDisabled ? (
-                ''
-            ) : (
+            {isActionVisible ? (
                 <button
                     type="button"
                     className={buttonClassName}
                     data-status={resolvedStatus}
-                    disabled={isDisabled}
                     onClick={onClick}
                 >
                     {labels[resolvedStatus]}
                 </button>
-            )}
+            ) : null}
         </div>
     );
 }

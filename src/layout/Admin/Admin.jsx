@@ -19,7 +19,7 @@ export default function Admin() {
         ranking: semiFinal1OfficialRanking,
         handleRankingChange: handleSemiFinal1OfficialRankingChange,
         handleRankingSave: handleSemiFinal1OfficialRankingSave,
-        getResolvedSaveStatus: getSemiFinal1OfficialRankingSaveStatus,
+        saveStatus: semiFinal1OfficialRankingSaveStatus,
     } = useOfficialRanking({
         storageKey:
             OFFICIAL_RANKING_LOCAL_STORAGE_KEYS.semiFinal1OfficialRanking,
@@ -31,7 +31,7 @@ export default function Admin() {
         ranking: semiFinal2OfficialRanking,
         handleRankingChange: handleSemiFinal2OfficialRankingChange,
         handleRankingSave: handleSemiFinal2OfficialRankingSave,
-        getResolvedSaveStatus: getSemiFinal2OfficialRankingSaveStatus,
+        saveStatus: semiFinal2OfficialRankingSaveStatus,
     } = useOfficialRanking({
         storageKey:
             OFFICIAL_RANKING_LOCAL_STORAGE_KEYS.semiFinal2OfficialRanking,
@@ -43,7 +43,7 @@ export default function Admin() {
         ranking: finalOfficialRanking,
         handleRankingChange: handleFinalOfficialRankingChange,
         handleRankingSave: handleFinalOfficialRankingSave,
-        getResolvedSaveStatus: getFinalOfficialRankingSaveStatus,
+        saveStatus: finalOfficialRankingSaveStatus,
     } = useOfficialRanking({
         storageKey: OFFICIAL_RANKING_LOCAL_STORAGE_KEYS.finalOfficialRanking,
         sessionKey: OFFICIAL_RANKING_SESSIONS.finalOfficialRanking,
@@ -58,7 +58,7 @@ export default function Admin() {
                     <h2 className="admin-classement__title">1re demi-finale</h2>
                     <RankingSaveButton
                         className="admin-classement__saveButton"
-                        status={getSemiFinal1OfficialRankingSaveStatus()}
+                        status={semiFinal1OfficialRankingSaveStatus}
                         onClick={handleSemiFinal1OfficialRankingSave}
                     />
                 </div>
@@ -78,7 +78,7 @@ export default function Admin() {
                     <h2 className="admin-classement__title">2e demi-finale</h2>
                     <RankingSaveButton
                         className="admin-classement__saveButton"
-                        status={getSemiFinal2OfficialRankingSaveStatus()}
+                        status={semiFinal2OfficialRankingSaveStatus}
                         onClick={handleSemiFinal2OfficialRankingSave}
                     />
                 </div>
@@ -98,7 +98,7 @@ export default function Admin() {
                     <h2 className="admin-classement__title">Finale</h2>
                     <RankingSaveButton
                         className="admin-classement__saveButton"
-                        status={getFinalOfficialRankingSaveStatus()}
+                        status={finalOfficialRankingSaveStatus}
                         onClick={handleFinalOfficialRankingSave}
                     />
                 </div>

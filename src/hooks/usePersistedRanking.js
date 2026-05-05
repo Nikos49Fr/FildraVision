@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { RANKING_SAVE_STATUSES } from '../components/RankingSaveButton/RankingSaveButton';
+import { RANKING_SAVE_STATUSES } from '../utils/helpers/rankingSaveStatus';
 import {
     getStoredRanking,
     getStoredRankingCodes,
@@ -9,6 +9,15 @@ import {
     saveStoredRanking,
     saveStoredRankingCodes,
 } from '../utils/helpers/rankingsPersistence';
+
+const SAVING_STATUS_DURATION = 1000;
+const ERROR_STATUS_DURATION = 3000;
+
+function wait(duration) {
+    return new Promise((resolve) => {
+        setTimeout(resolve, duration);
+    });
+}
 
 export default function usePersistedRanking({
     storageKey,
@@ -23,7 +32,7 @@ export default function usePersistedRanking({
     const [databaseRankingCodes, setDatabaseRankingCodes] = useState(null);
     const [saveStatusOverride, setSaveStatusOverride] = useState(null);
     const rankingRef = useRef(ranking);
-    const errorTimeoutRef = useRef(null);
+    const statusTimeoutRef = useRef(null);
 
     useEffect(() => {
         rankingRef.current = ranking;
@@ -68,8 +77,8 @@ export default function usePersistedRanking({
         return () => {
             isMounted = false;
 
-            if (errorTimeoutRef.current) {
-                clearTimeout(errorTimeoutRef.current);
+            if (statusTimeoutRef.current) {
+                clearTimeout(statusTimeoutRef.current);
             }
         };
     }, [
@@ -79,12 +88,15 @@ export default function usePersistedRanking({
         storageKey,
     ]);
 
-    function handleRankingChange(nextRanking) {
-        if (errorTimeoutRef.current) {
-            clearTimeout(errorTimeoutRef.current);
-            errorTimeoutRef.current = null;
+    function clearStatusTimeout() {
+        if (statusTimeoutRef.current) {
+            clearTimeout(statusTimeoutRef.current);
+            statusTimeoutRef.current = null;
         }
+    }
 
+    function handleRankingChange(nextRanking) {
+        clearStatusTimeout();
         setRanking(nextRanking);
         saveStoredRanking(storageKey, nextRanking);
         setSaveStatusOverride(null);
@@ -92,41 +104,41 @@ export default function usePersistedRanking({
 
     async function handleRankingSave() {
         const currentRankingCodes = getRankingCodes(rankingRef.current);
+        const savingDelay = wait(SAVING_STATUS_DURATION);
 
+        clearStatusTimeout();
         setSaveStatusOverride(RANKING_SAVE_STATUSES.saving);
 
         try {
             await saveDatabaseRankingCodes(currentRankingCodes);
+            await savingDelay;
 
             saveStoredRankingCodes(storageKey, currentRankingCodes);
             setDatabaseRankingCodes(currentRankingCodes);
             setSaveStatusOverride(null);
         } catch (error) {
+            await savingDelay;
             console.error(error.message);
             setSaveStatusOverride(RANKING_SAVE_STATUSES.error);
 
-            errorTimeoutRef.current = setTimeout(() => {
+            statusTimeoutRef.current = setTimeout(() => {
                 setSaveStatusOverride(null);
-                errorTimeoutRef.current = null;
-            }, 2500);
+                statusTimeoutRef.current = null;
+            }, ERROR_STATUS_DURATION);
         }
     }
 
-    function getResolvedSaveStatus() {
-        if (saveStatusOverride) {
-            return saveStatusOverride;
-        }
-
-        return getRankingSaveStatus({
+    const saveStatus =
+        saveStatusOverride ??
+        getRankingSaveStatus({
             databaseRankingCodes,
             currentRankingCodes: getRankingCodes(ranking),
         });
-    }
 
     return {
         ranking,
         handleRankingChange,
         handleRankingSave,
-        getResolvedSaveStatus,
+        saveStatus,
     };
 }

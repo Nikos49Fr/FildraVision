@@ -9,12 +9,11 @@
     &__helper {
         font-weight: 500;
         text-align: center;
-        // vertical-align: middle;
     }
 
     &__icon {
-        height: 3vw;
-        width: 15%;
+        flex: 0 0 3vw;
+
         &--empty {
             color: #d64545;
         }
@@ -51,16 +50,11 @@
             outline: 2px solid #000;
             outline-offset: 3px;
         }
-        &:not(:disabled) {
-            cursor: pointer;
-            @include drop-shadow();
+        cursor: pointer;
+        @include drop-shadow();
 
-            &:hover {
-                transform: translateY(2px);
-            }
-        }
-        &:disabled {
-            cursor: default;
+        &:hover {
+            transform: translateY(2px);
         }
 
         &--empty {
