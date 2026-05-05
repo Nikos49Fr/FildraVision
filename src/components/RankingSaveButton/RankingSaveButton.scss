@@ -1,60 +1,88 @@
 @use './../../styles/mixins' as *;
 
-.rankingSaveButton {
-    border: 0;
-    border-radius: 16px;
-    padding: 1rem 1.4rem;
-    min-width: 14rem;
-    font: inherit;
-    font-weight: 700;
-    line-height: 1.1;
-    text-align: center;
-    transition:
-        background-color 180ms ease-in-out,
-        color 180ms ease-in-out,
-        transform 180ms ease-in-out,
-        box-shadow 180ms ease-in-out;
-    @include drop-shadow();
+.rankingSave {
+    display: flex;
+    align-items: center;
+    gap: 1vw;
+    font-size: 0.9vw;
 
-    &:focus-visible {
-        outline: 2px solid #fff;
-        outline-offset: 3px;
+    &__helper {
+        font-weight: 500;
+        text-align: center;
+        // vertical-align: middle;
     }
 
-    &:not(:disabled) {
-        cursor: pointer;
-
-        &:hover {
-            transform: translateY(-1px);
+    &__icon {
+        height: 3vw;
+        width: 15%;
+        &--empty {
+            color: #d64545;
+        }
+        &--dirty {
+            color: #e09a1a;
+        }
+        &--saved {
+            color: #2e9b57;
+        }
+        &--saving {
+            color: #7f8794;
+        }
+        &--error {
+            color: #d64545;
         }
     }
 
-    &:disabled {
-        cursor: default;
-    }
+    &__button {
+        border: 0;
+        border-radius: 1vw;
+        padding: 0.75vw 2vw;
+        font: inherit;
+        font-weight: 700;
+        white-space: nowrap;
+        line-height: 1;
+        text-align: center;
+        transition:
+            background-color 180ms ease-in-out,
+            color 180ms ease-in-out,
+            transform 180ms ease-in-out,
+            box-shadow 180ms ease-in-out;
 
-    &--empty {
-        background-color: #d9b11e;
-        color: #1b1b1b;
-    }
+        &:focus-visible {
+            outline: 2px solid #000;
+            outline-offset: 3px;
+        }
+        &:not(:disabled) {
+            cursor: pointer;
+            @include drop-shadow();
 
-    &--dirty {
-        background-color: #e09a1a;
-        color: #1b1b1b;
-    }
+            &:hover {
+                transform: translateY(2px);
+            }
+        }
+        &:disabled {
+            cursor: default;
+        }
 
-    &--saved {
-        background-color: #2e9b57;
-        color: #fff;
-    }
-
-    &--saving {
-        background-color: #7f8794;
-        color: #fff;
-    }
-
-    &--error {
-        background-color: #d64545;
-        color: #fff;
+        &--empty {
+            // background-color: #d9b11e;
+            background-color: #2e9b57;
+            color: #1b1b1b;
+        }
+        &--dirty {
+            background-color: #e09a1a;
+            color: #1b1b1b;
+        }
+        &--saved {
+            background-color: #2e9b57;
+            color: #fff;
+        }
+        &--saving {
+            background-color: #7f8794;
+            color: #fff;
+        }
+        &--error {
+            background-color: #d64545;
+            color: #fff;
+        }
     }
 }
