@@ -44,6 +44,45 @@ export const VOTE_SESSION_CONFIGS = {
 export const DEFAULT_VOTE_SESSION_CONFIG =
     VOTE_SESSION_CONFIGS[USER_RANKING_SESSIONS.semiFinal1UserRanking];
 
+export function getVotePageState({
+    isProfileLoading,
+    isOpenVoteSessionLoading,
+    isAuthenticated,
+    openSessionKey,
+}) {
+    const activeVoteSessionConfig = openSessionKey
+        ? (VOTE_SESSION_CONFIGS[openSessionKey] ?? null)
+        : null;
+    const resolvedVoteSessionConfig =
+        activeVoteSessionConfig ?? DEFAULT_VOTE_SESSION_CONFIG;
+    const isRankingEnabled =
+        !isProfileLoading &&
+        !isOpenVoteSessionLoading &&
+        isAuthenticated &&
+        Boolean(activeVoteSessionConfig);
+
+    return {
+        activeVoteSessionConfig,
+        resolvedVoteSessionConfig,
+        isRankingEnabled,
+        title: activeVoteSessionConfig?.title ?? 'Session de vote',
+        statusLabel:
+            activeVoteSessionConfig && !isOpenVoteSessionLoading
+                ? isAuthenticated
+                    ? 'Votes ouverts'
+                    : 'Connecte-toi pour voter'
+                : 'Votes fermés',
+        statusVariant:
+            activeVoteSessionConfig && !isOpenVoteSessionLoading
+                ? isAuthenticated
+                    ? 'open'
+                    : 'auth'
+                : 'closed',
+        shouldShowPreview:
+            Boolean(activeVoteSessionConfig) && !isRankingEnabled,
+    };
+}
+
 function getParticipantsByCode(allParticipants) {
     return allParticipants.reduce((acc, participant) => {
         acc[participant.code] = participant;
@@ -94,14 +133,17 @@ function sanitizeTierRankingStorage(
             }
 
             tierEntries[tier.id] = tierCodes
-                .filter(
-                    (code) =>
-                        typeof code === 'string' &&
-                        validCodes.has(code) &&
-                        !uniqueCodes.has(code),
-                )
                 .map((code) => {
+                    if (
+                        typeof code !== 'string' ||
+                        !validCodes.has(code) ||
+                        uniqueCodes.has(code)
+                    ) {
+                        return null;
+                    }
+
                     uniqueCodes.add(code);
+
                     return participantsByCode[code];
                 })
                 .filter(Boolean);

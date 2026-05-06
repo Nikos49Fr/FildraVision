@@ -5,11 +5,10 @@ import RankingSaveButton from '../../components/RankingSaveButton/RankingSaveBut
 import useUserRanking from './useUserRanking';
 import TierRankingBoard from '../../utils/DragAndDrop/TierRankingBoard';
 import {
-    DEFAULT_VOTE_SESSION_CONFIG,
     VOTE_TIER_LIST,
     USER_RANKING_SOURCE_ID,
-    VOTE_SESSION_CONFIGS,
     getParticipantsFromCodes,
+    getVotePageState,
 } from './Vote.helpers';
 import { useProfile } from '../../context/profileContext';
 import useOpenVoteSession from './useOpenVoteSession';
@@ -19,17 +18,21 @@ export default function Vote() {
     const { openSessionKey, isLoading: isOpenVoteSessionLoading } =
         useOpenVoteSession();
     const isAuthenticated = Boolean(profile);
-    const activeVoteSessionConfig = openSessionKey
-        ? (VOTE_SESSION_CONFIGS[openSessionKey] ?? null)
-        : null;
-    const resolvedVoteSessionConfig =
-        activeVoteSessionConfig ?? DEFAULT_VOTE_SESSION_CONFIG;
+    const {
+        activeVoteSessionConfig,
+        resolvedVoteSessionConfig,
+        isRankingEnabled,
+        title,
+        statusLabel,
+        statusVariant,
+        shouldShowPreview,
+    } = getVotePageState({
+        isProfileLoading,
+        isOpenVoteSessionLoading,
+        isAuthenticated,
+        openSessionKey,
+    });
     const fallbackParticipantCodes = resolvedVoteSessionConfig.participantCodes;
-    const isRankingEnabled =
-        !isProfileLoading &&
-        !isOpenVoteSessionLoading &&
-        isAuthenticated &&
-        Boolean(activeVoteSessionConfig);
     const participantsList = getParticipantsFromCodes(
         fallbackParticipantCodes,
         allParticipants,
@@ -48,20 +51,6 @@ export default function Vote() {
         tiers: VOTE_TIER_LIST,
         enabled: isRankingEnabled,
     });
-
-    const title = activeVoteSessionConfig?.title ?? 'Session de vote';
-    const statusLabel =
-        activeVoteSessionConfig && !isOpenVoteSessionLoading
-            ? isAuthenticated
-                ? 'Votes ouverts'
-                : 'Connecte-toi pour voter'
-            : 'Votes fermés';
-    const statusVariant =
-        activeVoteSessionConfig && !isOpenVoteSessionLoading
-            ? isAuthenticated
-                ? 'open'
-                : 'auth'
-            : 'closed';
 
     return (
         <main className="vote">
@@ -153,7 +142,7 @@ export default function Vote() {
                             <ArtistSmallCard country={country} />
                         )}
                     />
-                ) : activeVoteSessionConfig ? (
+                ) : shouldShowPreview ? (
                     <section className="vote-classement__preview">
                         <div className="vote-classement__previewHeader">
                             Participants

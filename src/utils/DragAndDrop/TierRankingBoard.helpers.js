@@ -1,4 +1,4 @@
-import { defaultGetItemId } from './DragAndDrop.helpers';
+import { defaultGetItemId } from './DragAndDrop.helpers.js';
 
 export function getBoardContainerItems(boardState, containerId, sourceId) {
     if (containerId === sourceId) {
