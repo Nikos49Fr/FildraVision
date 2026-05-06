@@ -3,12 +3,47 @@ import { requireSupabase } from './supabaseClient';
 
 const OFFICIAL_RANKINGS_TABLE = 'official_rankings';
 
+async function getOfficialRankingRecord(sessionKey) {
+    const supabase = requireSupabase();
+    const { data, error } = await supabase
+        .from(OFFICIAL_RANKINGS_TABLE)
+        .select('ranking_codes, is_published')
+        .eq('session_key', sessionKey)
+        .maybeSingle();
+
+    if (error) {
+        throw error;
+    }
+
+    if (!data) {
+        return null;
+    }
+
+    return {
+        rankingCodes: data.ranking_codes ?? null,
+        isPublished: Boolean(data.is_published),
+    };
+}
+
 export async function getOfficialRankingCodes(sessionKey) {
+    const record = await getOfficialRankingRecord(sessionKey);
+
+    return record?.rankingCodes ?? null;
+}
+
+export async function getOfficialRankingPublicationState(sessionKey) {
+    const record = await getOfficialRankingRecord(sessionKey);
+
+    return record?.isPublished ?? false;
+}
+
+export async function getPublishedOfficialRankingCodes(sessionKey) {
     const supabase = requireSupabase();
     const { data, error } = await supabase
         .from(OFFICIAL_RANKINGS_TABLE)
         .select('ranking_codes')
         .eq('session_key', sessionKey)
+        .eq('is_published', true)
         .maybeSingle();
 
     if (error) {
@@ -52,4 +87,33 @@ export async function saveOfficialRankingCodes(sessionKey, rankingCodes) {
     }
 
     return data;
+}
+
+export async function setOfficialRankingPublished(sessionKey, isPublished) {
+    const user = await getCurrentUser();
+
+    if (!user) {
+        throw new Error('Utilisateur non connecte.');
+    }
+
+    const supabase = requireSupabase();
+    const { data, error } = await supabase
+        .from(OFFICIAL_RANKINGS_TABLE)
+        .update({
+            is_published: isPublished,
+            updated_by: user.id,
+        })
+        .eq('session_key', sessionKey)
+        .select('is_published')
+        .maybeSingle();
+
+    if (error) {
+        throw error;
+    }
+
+    if (!data) {
+        throw new Error('Aucun classement officiel sauvegarde.');
+    }
+
+    return Boolean(data.is_published);
 }

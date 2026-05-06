@@ -3,6 +3,7 @@ import Header from './layout/Header/Header';
 import Home from './layout/Home/Home';
 import Singers from './layout/Singers/Singers';
 import Vote from './layout/Vote/Vote';
+import Results from './layout/Results/Results';
 import Admin from './layout/Admin/Admin';
 import AuthWidget from './components/AuthWidget/AuthWidget';
 import { ProtectedAdminRoute } from './utils/ProtectedAdminRoute/ProtectedAdminRoute';
@@ -15,6 +16,7 @@ export default function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/singers" element={<Singers />} />
                 <Route path="/vote" element={<Vote />} />
+                <Route path="/results" element={<Results />} />
                 <Route
                     path="/admin"
                     element={

@@ -1,0 +1,64 @@
+@use './../../styles/variables' as *;
+
+.toggleSwitch {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+    cursor: pointer;
+    color: $secondary-color;
+
+    &[data-disabled='true'] {
+        cursor: not-allowed;
+        opacity: 0.65;
+    }
+
+    &__input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    &__actionLabel {
+        font-size: 0.95rem;
+        font-weight: 700;
+        line-height: 1;
+    }
+
+    &__track {
+        position: relative;
+        width: 3.6rem;
+        height: 2rem;
+        border-radius: 999px;
+        background-color: rgb(22 30 41 / 0.14);
+        border: 1px solid rgb(22 30 41 / 0.22);
+        transition:
+            background-color 180ms ease-in-out,
+            border-color 180ms ease-in-out;
+    }
+
+    &__thumb {
+        position: absolute;
+        top: 0.2rem;
+        left: 0.2rem;
+        width: 1.4rem;
+        height: 1.4rem;
+        border-radius: 999px;
+        background-color: $secondary-color;
+        box-shadow: 0 2px 8px rgb(0 0 0 / 0.28);
+        transition:
+            transform 180ms ease-in-out,
+            background-color 180ms ease-in-out;
+    }
+
+    &[data-checked='true'] {
+        .toggleSwitch__track {
+            background-color: rgb(88 185 106 / 0.42);
+            border-color: rgb(88 185 106 / 0.5);
+        }
+
+        .toggleSwitch__thumb {
+            transform: translateX(1.55rem);
+            background-color: #fff;
+        }
+    }
+}

@@ -1,6 +1,6 @@
 @use './../../styles/mixins' as *;
+@use './../../styles/variables' as *;
 
-.admin {
-    @include ranking-layout(100%);
+.results {
     margin-bottom: 60px;
 }

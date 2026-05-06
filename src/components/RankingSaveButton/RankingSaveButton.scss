@@ -4,7 +4,7 @@
     display: flex;
     align-items: center;
     gap: 1vw;
-    font-size: 0.9vw;
+    font-size: 16px;
 
     &__helper {
         font-weight: 500;
@@ -78,5 +78,21 @@
             background-color: #d64545;
             color: #fff;
         }
+    }
+}
+
+@media (max-width: 1440px) {
+    .rankingSave {
+        font-size: 14px;
+    }
+}
+@media (max-width: 1024px) {
+    .rankingSave {
+        font-size: 12px;
+    }
+}
+@media (max-width: 768px) {
+    .rankingSave {
+        font-size: 10px;
     }
 }

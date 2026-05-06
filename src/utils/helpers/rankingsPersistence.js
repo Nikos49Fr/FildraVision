@@ -4,10 +4,22 @@ const OFFICIAL_RANKING_LOCAL_STORAGE_KEYS = {
     finalOfficialRanking: 'official-ranking-final',
 };
 
+const USER_RANKING_LOCAL_STORAGE_KEYS = {
+    semiFinal1UserRanking: 'user-ranking-semi-final-1',
+    semiFinal2UserRanking: 'user-ranking-semi-final-2',
+    finalUserRanking: 'user-ranking-final',
+};
+
 const OFFICIAL_RANKING_SESSIONS = {
     semiFinal1OfficialRanking: 'semi_final_1',
     semiFinal2OfficialRanking: 'semi_final_2',
     finalOfficialRanking: 'final',
+};
+
+const USER_RANKING_SESSIONS = {
+    semiFinal1UserRanking: 'semi_final_1',
+    semiFinal2UserRanking: 'semi_final_2',
+    finalUserRanking: 'final',
 };
 
 function getParticipantsByCode(allParticipants) {
@@ -140,4 +152,9 @@ export function getRankingSaveStatus({
         : 'dirty';
 }
 
-export { OFFICIAL_RANKING_LOCAL_STORAGE_KEYS, OFFICIAL_RANKING_SESSIONS };
+export {
+    OFFICIAL_RANKING_LOCAL_STORAGE_KEYS,
+    USER_RANKING_LOCAL_STORAGE_KEYS,
+    OFFICIAL_RANKING_SESSIONS,
+    USER_RANKING_SESSIONS,
+};

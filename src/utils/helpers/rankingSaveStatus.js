@@ -21,10 +21,10 @@ export const DEFAULT_RANKING_SAVE_LABELS = {
 
 export const DEFAULT_RANKING_SAVE_HELP_LABELS = {
     [RANKING_SAVE_STATUSES.empty]:
-        'Sauvegarde ton 1er classement. Tu pourras le modifier utltérieurement.',
+        'Après avoir sauvegardé ton classement, tu pourras toujours le modifier tant que les votes sont ouverts.',
     [RANKING_SAVE_STATUSES.dirty]:
-        'Des modifications ne sont pas enregistrées.',
-    [RANKING_SAVE_STATUSES.saved]: 'Ton classement est bien sauvegardé',
+        'Attention, tes modifications ne sont pas encore enregistrées.',
+    [RANKING_SAVE_STATUSES.saved]: 'Ton classement est bien sauvegardé. Tu peux encore le modifier si tu le souhaites.',
     [RANKING_SAVE_STATUSES.saving]: 'Sauvegarde en cours...',
     [RANKING_SAVE_STATUSES.error]:
         "Une erreur s'est produite. Actualise la page et réessaie de soumettre ton classement.",

@@ -1,3 +1,5 @@
+@use './variables' as *;
+
 @mixin responsive-width($values) {
     @each $breakpoint, $width in $values {
         @media (max-width: $breakpoint) {
@@ -8,4 +10,58 @@
 
 @mixin drop-shadow {
     filter: drop-shadow(6px 6px 8px rgb(0, 0, 0, 0.6));
+}
+
+@mixin tier-list-background($color, $alpha: 0.45) {
+    background-color: rgb($color, $alpha);
+}
+
+@mixin ranking-layout($item-width) {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1vw;
+    margin: 1vw;
+
+    &-classement {
+        width: $item-width;
+
+        &__header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        &__title {
+            color: $primary-color;
+            background-color: $secondary-color;
+            border-radius: 999px;
+            padding: 0.5rem 1rem;
+            text-align: center;
+            width: 100%;
+            @include drop-shadow();
+        }
+
+        &__table {
+            background-color: $secondary-color;
+            padding: 0.8vw;
+            border-radius: 16px;
+            @include drop-shadow();
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            gap: 1vw;
+
+            & > * {
+                cursor: grab;
+                transition: opacity 120ms ease-in-out;
+            }
+
+            & > [data-dragging='true'] {
+                opacity: 0;
+            }
+        }
+    }
 }

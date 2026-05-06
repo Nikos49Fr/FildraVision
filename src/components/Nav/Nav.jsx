@@ -33,6 +33,15 @@ export default function Nav() {
             >
                 Voter
             </NavLink>
+            <NavLink
+                to="/results"
+                end
+                className={({ isActive }) =>
+                    isActive ? 'nav__link nav__link--active' : 'nav__link'
+                }
+            >
+                Résultats
+            </NavLink>
             {profile?.is_admin ? (
                 <NavLink
                     to="/admin"
