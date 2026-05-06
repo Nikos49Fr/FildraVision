@@ -25,16 +25,8 @@ async function getOfficialRankingRecord(sessionKey) {
     };
 }
 
-export async function getOfficialRankingCodes(sessionKey) {
-    const record = await getOfficialRankingRecord(sessionKey);
-
-    return record?.rankingCodes ?? null;
-}
-
-export async function getOfficialRankingPublicationState(sessionKey) {
-    const record = await getOfficialRankingRecord(sessionKey);
-
-    return record?.isPublished ?? false;
+export async function getOfficialRankingState(sessionKey) {
+    return getOfficialRankingRecord(sessionKey);
 }
 
 export async function getPublishedOfficialRankingCodes(sessionKey) {

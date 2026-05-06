@@ -4,9 +4,7 @@ import { useSortable } from '@dnd-kit/react/sortable';
 import { RestrictToElement } from '@dnd-kit/dom/modifiers';
 import { defaultGetItemId } from './DragAndDrop.helpers';
 import {
-    findBoardItemContainerId,
-    getBoardContainerItems,
-    moveBoardItem,
+    getNextBoardStateFromDragEvent,
 } from './TierRankingBoard.helpers';
 
 function BoardDropZone({
@@ -90,9 +88,9 @@ export default function TierRankingBoard({
     itemClassName = '',
 }) {
     const containerRef = useRef(null);
-    const previousBoardStateRef = useRef(boardState);
-    const draftBoardStateRef = useRef(boardState);
-    const [draftBoardState, setDraftBoardState] = useState(boardState);
+    const initialBoardStateRef = useRef(boardState);
+    const projectedBoardStateRef = useRef(boardState);
+    const [projectedBoardState, setProjectedBoardState] = useState(boardState);
     const [activeItemId, setActiveItemId] = useState(null);
     const tierIds = tiers.map((tier) => tier.id);
     const modifiers = allowOutsideDrag
@@ -104,65 +102,18 @@ export default function TierRankingBoard({
           ];
 
     useEffect(() => {
-        draftBoardStateRef.current = draftBoardState;
-    }, [draftBoardState]);
+        projectedBoardStateRef.current = projectedBoardState;
+    }, [projectedBoardState]);
 
     useEffect(() => {
         if (activeItemId !== null) {
             return;
         }
 
-        setDraftBoardState(boardState);
-        draftBoardStateRef.current = boardState;
-        previousBoardStateRef.current = boardState;
+        setProjectedBoardState(boardState);
+        projectedBoardStateRef.current = boardState;
+        initialBoardStateRef.current = boardState;
     }, [activeItemId, boardState]);
-
-    function getNextBoardState(currentBoardState, event) {
-        const sourceSortable = event.operation.source?.sortable;
-        const sourceItem = event.operation.source?.data;
-
-        if (!sourceSortable || !sourceItem) {
-            return currentBoardState;
-        }
-
-        const itemId = getItemId(sourceItem, sourceSortable.initialIndex);
-        const fromContainerId =
-            findBoardItemContainerId(
-                currentBoardState,
-                itemId,
-                sourceId,
-                tierIds,
-                getItemId,
-            ) ??
-            sourceSortable.initialGroup;
-        const targetSortable = event.operation.target?.sortable;
-        const toContainerId =
-            targetSortable?.group ??
-            event.operation.target?.id ??
-            fromContainerId;
-        const targetItems = getBoardContainerItems(
-            currentBoardState,
-            toContainerId,
-            sourceId,
-        );
-        const toIndex =
-            typeof sourceSortable.index === 'number'
-                ? sourceSortable.index
-                : typeof targetSortable?.index === 'number'
-                ? targetSortable.index
-                : targetItems.length;
-
-        return moveBoardItem(currentBoardState, {
-            itemId,
-            fromContainerId,
-            toContainerId,
-            toIndex,
-            useProjectedIndex: typeof sourceSortable.index === 'number',
-            sourceId,
-            tierIds,
-            getItemId,
-        });
-    }
 
     function handleDragStart(event) {
         const sourceSortable = event.operation.source?.sortable;
@@ -174,9 +125,9 @@ export default function TierRankingBoard({
 
         const itemId = getItemId(sourceItem, sourceSortable.initialIndex);
 
-        previousBoardStateRef.current = boardState;
-        draftBoardStateRef.current = boardState;
-        setDraftBoardState(boardState);
+        initialBoardStateRef.current = boardState;
+        projectedBoardStateRef.current = boardState;
+        setProjectedBoardState(boardState);
         setActiveItemId(String(itemId));
     }
 
@@ -185,53 +136,69 @@ export default function TierRankingBoard({
             return;
         }
 
-        const currentBoardState = draftBoardStateRef.current;
-        const nextBoardState = getNextBoardState(currentBoardState, event);
+        const currentBoardState = projectedBoardStateRef.current;
+        const nextBoardState = getNextBoardStateFromDragEvent(
+            currentBoardState,
+            event,
+            {
+                sourceId,
+                tierIds,
+                getItemId,
+            },
+        );
 
         if (nextBoardState === currentBoardState) {
             return;
         }
 
-        draftBoardStateRef.current = nextBoardState;
-        setDraftBoardState(nextBoardState);
+        projectedBoardStateRef.current = nextBoardState;
+        setProjectedBoardState(nextBoardState);
     }
 
-    function resetDragState(nextBoardState) {
-        draftBoardStateRef.current = nextBoardState;
-        setDraftBoardState(nextBoardState);
+    function resetProjectedBoardState(nextBoardState) {
+        projectedBoardStateRef.current = nextBoardState;
+        setProjectedBoardState(nextBoardState);
         setActiveItemId(null);
     }
 
     function handleDragCancel() {
-        resetDragState(previousBoardStateRef.current);
+        resetProjectedBoardState(initialBoardStateRef.current);
     }
 
     function handleDragEnd(event) {
-        const currentDraftBoardState = draftBoardStateRef.current;
-        const previousBoardState = previousBoardStateRef.current;
-        const nextBoardState = getNextBoardState(currentDraftBoardState, event);
+        const currentProjectedBoardState = projectedBoardStateRef.current;
+        const initialBoardState = initialBoardStateRef.current;
+        const nextBoardState = getNextBoardStateFromDragEvent(
+            currentProjectedBoardState,
+            event,
+            {
+                sourceId,
+                tierIds,
+                getItemId,
+            },
+        );
 
         setActiveItemId(null);
 
         if (event.canceled) {
-            resetDragState(previousBoardState);
+            resetProjectedBoardState(initialBoardState);
             return;
         }
 
-        if (nextBoardState === currentDraftBoardState) {
-            if (currentDraftBoardState === previousBoardState) {
-                resetDragState(boardState);
+        if (nextBoardState === currentProjectedBoardState) {
+            if (currentProjectedBoardState === initialBoardState) {
+                resetProjectedBoardState(boardState);
                 return;
             }
 
-            onChange(currentDraftBoardState);
+            onChange(currentProjectedBoardState);
             return;
         }
 
         onChange(nextBoardState);
     }
 
-    const displayedBoardState = draftBoardState;
+    const displayedBoardState = projectedBoardState;
 
     return (
         <DragDropProvider

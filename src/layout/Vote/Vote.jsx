@@ -1,38 +1,18 @@
 import './Vote.scss';
-import {
-    allParticipants,
-    semiFinal1Participants,
-    semiFinal2Participants,
-    finalParticipants,
-} from '../../datas/countries';
+import { allParticipants } from '../../datas/countries';
 import ArtistSmallCard from '../../components/ArtistSmallCard/ArtistSmallCard';
 import RankingSaveButton from '../../components/RankingSaveButton/RankingSaveButton';
 import useUserRanking from './useUserRanking';
 import TierRankingBoard from '../../utils/DragAndDrop/TierRankingBoard';
 import {
-    SEMI_FINAL_1_TIER_LIST,
+    DEFAULT_VOTE_SESSION_CONFIG,
+    VOTE_TIER_LIST,
     USER_RANKING_SOURCE_ID,
     VOTE_SESSION_CONFIGS,
+    getParticipantsFromCodes,
 } from './Vote.helpers';
 import { useProfile } from '../../context/profileContext';
 import useOpenVoteSession from './useOpenVoteSession';
-
-const FALLBACK_PARTICIPANT_CODES_BY_SESSION = {
-    semi_final_1: semiFinal1Participants,
-    semi_final_2: semiFinal2Participants,
-    final: finalParticipants,
-};
-
-function getParticipantsList(participantCodes, participants) {
-    const participantsByCode = participants.reduce((acc, participant) => {
-        acc[participant.code] = participant;
-        return acc;
-    }, {});
-
-    return participantCodes
-        .map((code) => participantsByCode[code])
-        .filter(Boolean);
-}
 
 export default function Vote() {
     const { profile, isProfileLoading } = useProfile();
@@ -42,16 +22,15 @@ export default function Vote() {
     const activeVoteSessionConfig = openSessionKey
         ? (VOTE_SESSION_CONFIGS[openSessionKey] ?? null)
         : null;
-    const fallbackParticipantCodes =
-        (openSessionKey &&
-            FALLBACK_PARTICIPANT_CODES_BY_SESSION[openSessionKey]) ??
-        semiFinal1Participants;
+    const resolvedVoteSessionConfig =
+        activeVoteSessionConfig ?? DEFAULT_VOTE_SESSION_CONFIG;
+    const fallbackParticipantCodes = resolvedVoteSessionConfig.participantCodes;
     const isRankingEnabled =
         !isProfileLoading &&
         !isOpenVoteSessionLoading &&
         isAuthenticated &&
         Boolean(activeVoteSessionConfig);
-    const participantsList = getParticipantsList(
+    const participantsList = getParticipantsFromCodes(
         fallbackParticipantCodes,
         allParticipants,
     );
@@ -62,15 +41,11 @@ export default function Vote() {
         handleBoardStateSave: handleUserRankingSave,
         saveStatus: userRankingSaveStatus,
     } = useUserRanking({
-        storageKey:
-            activeVoteSessionConfig?.storageKey ??
-            VOTE_SESSION_CONFIGS.semi_final_1.storageKey,
-        sessionKey:
-            activeVoteSessionConfig?.sessionKey ??
-            VOTE_SESSION_CONFIGS.semi_final_1.sessionKey,
+        storageKey: resolvedVoteSessionConfig.storageKey,
+        sessionKey: resolvedVoteSessionConfig.sessionKey,
         fallbackParticipantCodes,
         allParticipants,
-        tiers: SEMI_FINAL_1_TIER_LIST,
+        tiers: VOTE_TIER_LIST,
         enabled: isRankingEnabled,
     });
 
@@ -129,8 +104,8 @@ export default function Vote() {
                         <>
                             <p className="vote-classement__noticeText">
                                 Glisse les pays dans les différents tiers pour
-                                construire ton classement. L'ordre reste
-                                important à l'intérieur de chaque tier.
+                                construire ton classement. L&apos;ordre reste
+                                important à l&apos;intérieur de chaque tier.
                             </p>
                             <p className="vote-classement__noticeText">
                                 Une fois ton classement sauvegardé, tu peux
@@ -168,7 +143,7 @@ export default function Vote() {
                         tierClassName="vote-classement__tier"
                         itemClassName="vote-classement__item"
                         boardState={userRankingBoardState}
-                        tiers={SEMI_FINAL_1_TIER_LIST}
+                        tiers={VOTE_TIER_LIST}
                         sourceId={USER_RANKING_SOURCE_ID}
                         sourceLabel="Pays à classer"
                         allowOutsideDrag={true}

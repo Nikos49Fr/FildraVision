@@ -104,3 +104,57 @@ export function moveBoardItem(
 
     return nextBoardState;
 }
+
+export function getNextBoardStateFromDragEvent(
+    currentBoardState,
+    event,
+    {
+        sourceId,
+        tierIds,
+        getItemId = defaultGetItemId,
+    },
+) {
+    const sourceSortable = event.operation.source?.sortable;
+    const sourceItem = event.operation.source?.data;
+
+    if (!sourceSortable || !sourceItem) {
+        return currentBoardState;
+    }
+
+    const itemId = getItemId(sourceItem, sourceSortable.initialIndex);
+    const fromContainerId =
+        findBoardItemContainerId(
+            currentBoardState,
+            itemId,
+            sourceId,
+            tierIds,
+            getItemId,
+        ) ?? sourceSortable.initialGroup;
+    const targetSortable = event.operation.target?.sortable;
+    const toContainerId =
+        targetSortable?.group ??
+        event.operation.target?.id ??
+        fromContainerId;
+    const targetItems = getBoardContainerItems(
+        currentBoardState,
+        toContainerId,
+        sourceId,
+    );
+    const toIndex =
+        typeof sourceSortable.index === 'number'
+            ? sourceSortable.index
+            : typeof targetSortable?.index === 'number'
+              ? targetSortable.index
+              : targetItems.length;
+
+    return moveBoardItem(currentBoardState, {
+        itemId,
+        fromContainerId,
+        toContainerId,
+        toIndex,
+        useProjectedIndex: typeof sourceSortable.index === 'number',
+        sourceId,
+        tierIds,
+        getItemId,
+    });
+}

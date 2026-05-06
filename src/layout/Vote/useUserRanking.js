@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { RANKING_SAVE_STATUSES } from '../../utils/helpers/rankingSaveStatus';
-import { getRankingSaveStatus } from '../../utils/helpers/rankingsPersistence';
 import {
     getUserRankingState,
     saveUserRankingState,
@@ -8,6 +7,7 @@ import {
 import {
     getDefaultVoteBoardState,
     getStoredVoteBoardState,
+    getVoteSaveStatus,
     getVoteBoardStateFromStoredValue,
     getVoteRankingCodes,
     hasStoredVoteBoardState,
@@ -34,6 +34,7 @@ export default function useUserRanking({
     );
     const [boardState, setBoardState] = useState(() => getDefaultBoardState());
     const [databaseRankingCodes, setDatabaseRankingCodes] = useState(null);
+    const [databaseBoardState, setDatabaseBoardState] = useState(null);
     const [saveStatusOverride, setSaveStatusOverride] = useState(null);
     const boardStateRef = useRef(boardState);
     const statusTimeoutRef = useRef(null);
@@ -64,6 +65,7 @@ export default function useUserRanking({
 
                 setBoardState(nextDefaultBoardState);
                 setDatabaseRankingCodes(null);
+                setDatabaseBoardState(null);
                 setSaveStatusOverride(null);
                 return;
             }
@@ -101,6 +103,9 @@ export default function useUserRanking({
 
                 setDatabaseRankingCodes(
                     nextDatabaseRankingState?.rankingCodes ?? null,
+                );
+                setDatabaseBoardState(
+                    nextDatabaseRankingState?.boardState ?? null,
                 );
             } catch (error) {
                 console.error(error.message);
@@ -164,6 +169,10 @@ export default function useUserRanking({
             setDatabaseRankingCodes(
                 nextDatabaseRankingState?.rankingCodes ?? currentRankingCodes,
             );
+            setDatabaseBoardState(
+                nextDatabaseRankingState?.boardState ??
+                    serializeVoteBoardState(currentBoardState, tiers),
+            );
             setSaveStatusOverride(null);
         } catch (error) {
             console.error(error.message);
@@ -180,9 +189,11 @@ export default function useUserRanking({
         !enabled
             ? RANKING_SAVE_STATUSES.empty
             : saveStatusOverride ??
-              getRankingSaveStatus({
+              getVoteSaveStatus({
                   databaseRankingCodes,
-                  currentRankingCodes: getVoteRankingCodes(boardState, tiers),
+                  databaseBoardState,
+                  currentBoardState: boardState,
+                  tiers,
               });
 
     return {

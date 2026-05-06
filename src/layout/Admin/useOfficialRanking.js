@@ -1,8 +1,7 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import usePersistedRanking from '../../hooks/usePersistedRanking';
 import {
-    getOfficialRankingCodes,
-    getOfficialRankingPublicationState,
+    getOfficialRankingState,
     saveOfficialRankingCodes,
     setOfficialRankingPublished,
 } from '../../services/officialRankings';
@@ -17,38 +16,30 @@ export default function useOfficialRanking({
     const [isPublished, setIsPublished] = useState(false);
     const [isPublicationLoading, setIsPublicationLoading] = useState(true);
     const [isPublicationPending, setIsPublicationPending] = useState(false);
-    const loadDatabaseRankingCodes = useCallback(
-        () => getOfficialRankingCodes(sessionKey),
+    const loadDatabaseState = useCallback(
+        () => getOfficialRankingState(sessionKey),
         [sessionKey],
     );
     const saveDatabaseRankingCodes = useCallback(
         (rankingCodes) => saveOfficialRankingCodes(sessionKey, rankingCodes),
         [sessionKey],
     );
+    const handleDatabaseStateLoaded = useCallback((databaseState) => {
+        setIsPublished(databaseState?.isPublished ?? false);
+    }, []);
+    const handleDatabaseStateLoadFinished = useCallback(() => {
+        setIsPublicationLoading(false);
+    }, []);
 
     const persistedRanking = usePersistedRanking({
         storageKey,
         fallbackParticipantCodes,
         allParticipants,
-        loadDatabaseRankingCodes,
+        loadDatabaseState,
         saveDatabaseRankingCodes,
+        onDatabaseStateLoaded: handleDatabaseStateLoaded,
+        onDatabaseStateLoadFinished: handleDatabaseStateLoadFinished,
     });
-
-    const loadPublicationState = useCallback(async () => {
-        try {
-            const nextPublicationState =
-                await getOfficialRankingPublicationState(sessionKey);
-            setIsPublished(nextPublicationState);
-        } catch (error) {
-            console.error(error.message);
-        } finally {
-            setIsPublicationLoading(false);
-        }
-    }, [sessionKey]);
-
-    useEffect(() => {
-        void loadPublicationState();
-    }, [loadPublicationState]);
 
     async function handlePublicationChange(nextChecked) {
         setIsPublicationPending(true);

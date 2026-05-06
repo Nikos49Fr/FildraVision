@@ -23,8 +23,13 @@ export default function usePersistedRanking({
     storageKey,
     fallbackParticipantCodes,
     allParticipants,
+    loadDatabaseState,
     loadDatabaseRankingCodes,
     saveDatabaseRankingCodes,
+    getDatabaseRankingCodesFromState = (databaseState) =>
+        databaseState?.rankingCodes ?? null,
+    onDatabaseStateLoaded,
+    onDatabaseStateLoadFinished,
 }) {
     const [ranking, setRanking] = useState(() =>
         getStoredRanking(storageKey, fallbackParticipantCodes, allParticipants),
@@ -45,11 +50,19 @@ export default function usePersistedRanking({
             const storedRankingCodes = getStoredRankingCodes(storageKey);
 
             try {
-                const nextDatabaseRankingCodes =
-                    await loadDatabaseRankingCodes();
+                const nextDatabaseState = loadDatabaseState
+                    ? await loadDatabaseState()
+                    : await loadDatabaseRankingCodes();
+                const nextDatabaseRankingCodes = loadDatabaseState
+                    ? getDatabaseRankingCodesFromState(nextDatabaseState)
+                    : nextDatabaseState;
 
                 if (!isMounted) {
                     return;
+                }
+
+                if (loadDatabaseState) {
+                    onDatabaseStateLoaded?.(nextDatabaseState);
                 }
 
                 setDatabaseRankingCodes(nextDatabaseRankingCodes);
@@ -69,6 +82,10 @@ export default function usePersistedRanking({
                 }
             } catch (error) {
                 console.error(error.message);
+            } finally {
+                if (isMounted) {
+                    onDatabaseStateLoadFinished?.();
+                }
             }
         }
 
@@ -84,7 +101,11 @@ export default function usePersistedRanking({
     }, [
         allParticipants,
         fallbackParticipantCodes,
+        getDatabaseRankingCodesFromState,
+        loadDatabaseState,
         loadDatabaseRankingCodes,
+        onDatabaseStateLoaded,
+        onDatabaseStateLoadFinished,
         storageKey,
     ]);
 

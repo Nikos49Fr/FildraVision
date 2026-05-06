@@ -1,8 +1,4 @@
 import './Admin.scss';
-import ArtistSmallCard from '../../components/ArtistSmallCard/ArtistSmallCard';
-import RankingSaveButton from '../../components/RankingSaveButton/RankingSaveButton';
-import DragAndDrop from '../../utils/DragAndDrop/DragAndDrop';
-import ToggleSwitch from '../../components/ToggleSwitch/ToggleSwitch';
 import {
     OFFICIAL_RANKING_LOCAL_STORAGE_KEYS,
     OFFICIAL_RANKING_SESSIONS,
@@ -15,6 +11,7 @@ import {
 } from '../../datas/countries';
 import useOfficialRanking from './useOfficialRanking';
 import useVoteAvailability from './useVoteAvailability';
+import AdminRankingSection from './AdminRankingSection';
 
 export default function Admin() {
     const {
@@ -75,165 +72,99 @@ export default function Admin() {
 
     return (
         <main className="admin">
-            <article className="admin-classement">
-                <header className="admin-classement__header">
-                    <h2 className="admin-classement__title">Demi-Finale 1</h2>
-                    <ToggleSwitch
-                        className="admin-classement__voteSwitch"
-                        id="semi-final-1-vote-switch"
-                        checked={isSessionOpen(
-                            OFFICIAL_RANKING_SESSIONS.semiFinal1OfficialRanking,
-                        )}
-                        disabled={
-                            isVoteAvailabilityLoading ||
-                            isSessionPending(
-                                OFFICIAL_RANKING_SESSIONS.semiFinal1OfficialRanking,
-                            )
-                        }
-                        labelOn="Votes ouverts"
-                        labelOff="Votes fermés"
-                        onChange={(nextChecked) =>
-                            handleVoteAvailabilityChange(
-                                OFFICIAL_RANKING_SESSIONS.semiFinal1OfficialRanking,
-                                nextChecked,
-                            )
-                        }
-                    />
-                    <ToggleSwitch
-                        className="admin-classement__publicationSwitch"
-                        id="semi-final-1-publication-switch"
-                        checked={isSemiFinal1OfficialRankingPublished}
-                        disabled={
-                            isSemiFinal1OfficialRankingPublicationSwitchDisabled
-                        }
-                        actionLabelOn="Retirer la publication"
-                        actionLabelOff="Publier le classement"
-                        onChange={
-                            handleSemiFinal1OfficialRankingPublicationChange
-                        }
-                    />
-                    <RankingSaveButton
-                        className="admin-classement__saveButton"
-                        status={semiFinal1OfficialRankingSaveStatus}
-                        onClick={handleSemiFinal1OfficialRankingSave}
-                    />
-                </header>
-                <DragAndDrop
-                    className="admin-classement__table"
-                    items={semiFinal1OfficialRanking}
-                    onChange={handleSemiFinal1OfficialRankingChange}
-                    getItemId={(country) => country.code}
-                    renderItem={(country) => (
-                        <ArtistSmallCard country={country} />
-                    )}
-                />
-            </article>
+            <AdminRankingSection
+                title="Demi-Finale 1"
+                ranking={semiFinal1OfficialRanking}
+                onRankingChange={handleSemiFinal1OfficialRankingChange}
+                onRankingSave={handleSemiFinal1OfficialRankingSave}
+                saveStatus={semiFinal1OfficialRankingSaveStatus}
+                voteSwitchId="semi-final-1-vote-switch"
+                isVoteOpen={isSessionOpen(
+                    OFFICIAL_RANKING_SESSIONS.semiFinal1OfficialRanking,
+                )}
+                isVoteSwitchDisabled={
+                    isVoteAvailabilityLoading ||
+                    isSessionPending(
+                        OFFICIAL_RANKING_SESSIONS.semiFinal1OfficialRanking,
+                    )
+                }
+                onVoteAvailabilityChange={(nextChecked) =>
+                    handleVoteAvailabilityChange(
+                        OFFICIAL_RANKING_SESSIONS.semiFinal1OfficialRanking,
+                        nextChecked,
+                    )
+                }
+                publicationSwitchId="semi-final-1-publication-switch"
+                isPublished={isSemiFinal1OfficialRankingPublished}
+                isPublicationSwitchDisabled={
+                    isSemiFinal1OfficialRankingPublicationSwitchDisabled
+                }
+                onPublicationChange={
+                    handleSemiFinal1OfficialRankingPublicationChange
+                }
+            />
 
-            <article className="admin-classement">
-                <header className="admin-classement__header">
-                    <h2 className="admin-classement__title">Demi-Finale 2</h2>
-                    <ToggleSwitch
-                        className="admin-classement__voteSwitch"
-                        id="semi-final-2-vote-switch"
-                        checked={isSessionOpen(
-                            OFFICIAL_RANKING_SESSIONS.semiFinal2OfficialRanking,
-                        )}
-                        disabled={
-                            isVoteAvailabilityLoading ||
-                            isSessionPending(
-                                OFFICIAL_RANKING_SESSIONS.semiFinal2OfficialRanking,
-                            )
-                        }
-                        labelOn="Votes ouverts"
-                        labelOff="Votes fermés"
-                        onChange={(nextChecked) =>
-                            handleVoteAvailabilityChange(
-                                OFFICIAL_RANKING_SESSIONS.semiFinal2OfficialRanking,
-                                nextChecked,
-                            )
-                        }
-                    />
-                    <ToggleSwitch
-                        className="admin-classement__publicationSwitch"
-                        id="semi-final-2-publication-switch"
-                        checked={isSemiFinal2OfficialRankingPublished}
-                        disabled={
-                            isSemiFinal2OfficialRankingPublicationSwitchDisabled
-                        }
-                        actionLabelOn="Retirer la publication"
-                        actionLabelOff="Publier le classement"
-                        onChange={
-                            handleSemiFinal2OfficialRankingPublicationChange
-                        }
-                    />
-                    <RankingSaveButton
-                        className="admin-classement__saveButton"
-                        status={semiFinal2OfficialRankingSaveStatus}
-                        onClick={handleSemiFinal2OfficialRankingSave}
-                    />
-                </header>
-                <DragAndDrop
-                    className="admin-classement__table"
-                    items={semiFinal2OfficialRanking}
-                    onChange={handleSemiFinal2OfficialRankingChange}
-                    getItemId={(country) => country.code}
-                    renderItem={(country) => (
-                        <ArtistSmallCard country={country} />
-                    )}
-                />
-            </article>
+            <AdminRankingSection
+                title="Demi-Finale 2"
+                ranking={semiFinal2OfficialRanking}
+                onRankingChange={handleSemiFinal2OfficialRankingChange}
+                onRankingSave={handleSemiFinal2OfficialRankingSave}
+                saveStatus={semiFinal2OfficialRankingSaveStatus}
+                voteSwitchId="semi-final-2-vote-switch"
+                isVoteOpen={isSessionOpen(
+                    OFFICIAL_RANKING_SESSIONS.semiFinal2OfficialRanking,
+                )}
+                isVoteSwitchDisabled={
+                    isVoteAvailabilityLoading ||
+                    isSessionPending(
+                        OFFICIAL_RANKING_SESSIONS.semiFinal2OfficialRanking,
+                    )
+                }
+                onVoteAvailabilityChange={(nextChecked) =>
+                    handleVoteAvailabilityChange(
+                        OFFICIAL_RANKING_SESSIONS.semiFinal2OfficialRanking,
+                        nextChecked,
+                    )
+                }
+                publicationSwitchId="semi-final-2-publication-switch"
+                isPublished={isSemiFinal2OfficialRankingPublished}
+                isPublicationSwitchDisabled={
+                    isSemiFinal2OfficialRankingPublicationSwitchDisabled
+                }
+                onPublicationChange={
+                    handleSemiFinal2OfficialRankingPublicationChange
+                }
+            />
 
-            <article className="admin-classement">
-                <header className="admin-classement__header">
-                    <h2 className="admin-classement__title">Grande Finale</h2>
-                    <ToggleSwitch
-                        className="admin-classement__voteSwitch"
-                        id="final-vote-switch"
-                        checked={isSessionOpen(
-                            OFFICIAL_RANKING_SESSIONS.finalOfficialRanking,
-                        )}
-                        disabled={
-                            isVoteAvailabilityLoading ||
-                            isSessionPending(
-                                OFFICIAL_RANKING_SESSIONS.finalOfficialRanking,
-                            )
-                        }
-                        labelOn="Votes ouverts"
-                        labelOff="Votes fermés"
-                        onChange={(nextChecked) =>
-                            handleVoteAvailabilityChange(
-                                OFFICIAL_RANKING_SESSIONS.finalOfficialRanking,
-                                nextChecked,
-                            )
-                        }
-                    />
-                    <ToggleSwitch
-                        className="admin-classement__publicationSwitch"
-                        id="final-publication-switch"
-                        checked={isFinalOfficialRankingPublished}
-                        disabled={
-                            isFinalOfficialRankingPublicationSwitchDisabled
-                        }
-                        actionLabelOn="Retirer la publication"
-                        actionLabelOff="Publier le classement"
-                        onChange={handleFinalOfficialRankingPublicationChange}
-                    />
-                    <RankingSaveButton
-                        className="admin-classement__saveButton"
-                        status={finalOfficialRankingSaveStatus}
-                        onClick={handleFinalOfficialRankingSave}
-                    />
-                </header>
-                <DragAndDrop
-                    className="admin-classement__table"
-                    items={finalOfficialRanking}
-                    onChange={handleFinalOfficialRankingChange}
-                    getItemId={(country) => country.code}
-                    renderItem={(country) => (
-                        <ArtistSmallCard country={country} />
-                    )}
-                />
-            </article>
+            <AdminRankingSection
+                title="Grande Finale"
+                ranking={finalOfficialRanking}
+                onRankingChange={handleFinalOfficialRankingChange}
+                onRankingSave={handleFinalOfficialRankingSave}
+                saveStatus={finalOfficialRankingSaveStatus}
+                voteSwitchId="final-vote-switch"
+                isVoteOpen={isSessionOpen(
+                    OFFICIAL_RANKING_SESSIONS.finalOfficialRanking,
+                )}
+                isVoteSwitchDisabled={
+                    isVoteAvailabilityLoading ||
+                    isSessionPending(
+                        OFFICIAL_RANKING_SESSIONS.finalOfficialRanking,
+                    )
+                }
+                onVoteAvailabilityChange={(nextChecked) =>
+                    handleVoteAvailabilityChange(
+                        OFFICIAL_RANKING_SESSIONS.finalOfficialRanking,
+                        nextChecked,
+                    )
+                }
+                publicationSwitchId="final-publication-switch"
+                isPublished={isFinalOfficialRankingPublished}
+                isPublicationSwitchDisabled={
+                    isFinalOfficialRankingPublicationSwitchDisabled
+                }
+                onPublicationChange={handleFinalOfficialRankingPublicationChange}
+            />
         </main>
     );
 }
