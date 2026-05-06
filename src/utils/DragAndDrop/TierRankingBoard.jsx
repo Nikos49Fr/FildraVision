@@ -134,14 +134,9 @@ export default function TierRankingBoard({
                 tierIds,
                 getItemId,
             ) ??
-            sourceSortable.initialGroup ??
-            sourceSortable.group;
+            sourceSortable.initialGroup;
         const targetSortable = event.operation.target?.sortable;
-        const hasProjectedDestination =
-            typeof sourceSortable.index === 'number' &&
-            typeof sourceSortable.group === 'string';
         const toContainerId =
-            sourceSortable.group ??
             targetSortable?.group ??
             event.operation.target?.id ??
             fromContainerId;
@@ -162,7 +157,7 @@ export default function TierRankingBoard({
             fromContainerId,
             toContainerId,
             toIndex,
-            useProjectedIndex: hasProjectedDestination,
+            useProjectedIndex: typeof sourceSortable.index === 'number',
             sourceId,
             tierIds,
             getItemId,
@@ -214,6 +209,7 @@ export default function TierRankingBoard({
     function handleDragEnd(event) {
         const currentDraftBoardState = draftBoardStateRef.current;
         const previousBoardState = previousBoardStateRef.current;
+        const nextBoardState = getNextBoardState(currentDraftBoardState, event);
 
         setActiveItemId(null);
 
@@ -222,12 +218,17 @@ export default function TierRankingBoard({
             return;
         }
 
-        if (currentDraftBoardState === previousBoardState) {
-            resetDragState(boardState);
+        if (nextBoardState === currentDraftBoardState) {
+            if (currentDraftBoardState === previousBoardState) {
+                resetDragState(boardState);
+                return;
+            }
+
+            onChange(currentDraftBoardState);
             return;
         }
 
-        onChange(currentDraftBoardState);
+        onChange(nextBoardState);
     }
 
     const displayedBoardState = draftBoardState;

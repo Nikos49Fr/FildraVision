@@ -96,6 +96,10 @@ export function moveBoardItem(
         nextIndex -= 1;
     }
 
+    if (fromContainerId === toContainerId && sourceIndex === nextIndex) {
+        return boardState;
+    }
+
     targetItems.splice(nextIndex, 0, movedItem);
 
     return nextBoardState;
