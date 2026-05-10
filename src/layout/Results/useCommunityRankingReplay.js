@@ -5,7 +5,6 @@ import {
     COMMUNITY_REPLAY_PHASES,
     findNextManualReplayStepIndex,
     findPreviousManualReplayStepIndex,
-    getCommunityReplayProgressStorageKey,
     getReplayStepDelay,
 } from './Results.helpers';
 
@@ -19,7 +18,6 @@ export default function useCommunityRankingReplay({
     onRevealStart,
     onReplayCompleted,
 }) {
-    const storageKey = getCommunityReplayProgressStorageKey(sessionKey);
     const [currentStepIndex, setCurrentStepIndex] = useState(0);
     const [isPlaying, setIsPlaying] = useState(false);
     const [isPending, setIsPending] = useState(false);
@@ -46,29 +44,11 @@ export default function useCommunityRankingReplay({
     );
 
     useEffect(() => {
-        const storedProgress = localStorage.getItem(storageKey);
         let nextStepIndex = 0;
-        let nextHasRevealStarted =
+        const nextHasRevealStarted =
             initialStatus === 'revealing' || initialStatus === 'published';
 
-        if (storedProgress) {
-            try {
-                const parsedProgress = JSON.parse(storedProgress);
-
-                if (typeof parsedProgress?.currentStepIndex === 'number') {
-                    nextStepIndex = Math.min(
-                        Math.max(parsedProgress.currentStepIndex, 0),
-                        Math.max(replay.timeline.length - 1, 0),
-                    );
-                }
-
-                if (typeof parsedProgress?.hasRevealStarted === 'boolean') {
-                    nextHasRevealStarted = parsedProgress.hasRevealStarted;
-                }
-            } catch (error) {
-                console.error(error.message);
-            }
-        } else if (initialStatus === 'published' && replay.timeline.length > 0) {
+        if (initialStatus === 'published' && replay.timeline.length > 0) {
             nextStepIndex = replay.timeline.length - 1;
         }
 
@@ -78,7 +58,7 @@ export default function useCommunityRankingReplay({
         setPauseTargetStepIndex(null);
         setHasRevealStarted(nextHasRevealStarted);
         completionHandledRef.current = initialStatus === 'published';
-    }, [initialStatus, replay, storageKey]);
+    }, [initialStatus, replay]);
 
     useEffect(() => {
         if (initialStatus === 'revealing' || initialStatus === 'published') {
@@ -89,16 +69,6 @@ export default function useCommunityRankingReplay({
             completionHandledRef.current = true;
         }
     }, [initialStatus]);
-
-    useEffect(() => {
-        localStorage.setItem(
-            storageKey,
-            JSON.stringify({
-                currentStepIndex,
-                hasRevealStarted,
-            }),
-        );
-    }, [currentStepIndex, hasRevealStarted, storageKey]);
 
     useEffect(() => {
         if (!enabled || !isPlaying || isPending || replayLength === 0) {

@@ -6,14 +6,15 @@ import {
     getSessionUserRankings,
     publishCommunityResult,
     setCommunityResultRevealing,
+    unpublishCommunityResult,
 } from '../../services/results';
 import ResultsCommunityRankingPanel from './ResultsCommunityRankingPanel';
 import ResultsSessionSelector from './ResultsSessionSelector';
 import ResultsVoterRankingsCarousel from './ResultsVoterRankingsCarousel';
 import ResultsVoterRevealPanel from './ResultsVoterRevealPanel';
 import {
-    DEFAULT_RESULTS_SESSION_KEY,
     COMMUNITY_REPLAY_PHASES,
+    DEFAULT_RESULTS_SESSION_KEY,
     RESULTS_SESSION_CONFIGS,
     buildCommunityRankingReplay,
     getCommunityRankingFromSnapshot,
@@ -62,7 +63,7 @@ export default function Results() {
                 }
 
                 setErrorMessage(
-                    "Impossible de charger les resultats pour l'instant.",
+                    "Impossible de charger les résultats pour l'instant.",
                 );
                 console.error(error.message);
             } finally {
@@ -97,6 +98,10 @@ export default function Results() {
                 : [],
         [communityResult?.rankingSnapshot, sessionConfig.participantCodes],
     );
+    const sessionStatus = communityResult?.status ?? 'idle';
+    const isCommunityResultPublished = sessionStatus === 'published';
+    const hasPublishedCommunityRanking =
+        isCommunityResultPublished && publishedCommunityRanking.length > 0;
 
     async function handleRevealStart() {
         const nextCommunityResult = await setCommunityResultRevealing(
@@ -112,7 +117,7 @@ export default function Results() {
         }));
     }
 
-    async function handleReplayCompleted() {
+    async function handlePublishCommunityResult() {
         const rankingSnapshot = serializeCommunityRankingSnapshot({
             sessionKey: selectedSessionKey,
             voterCount: replay.voterCount,
@@ -129,6 +134,11 @@ export default function Results() {
         setCommunityResult(nextCommunityResult);
     }
 
+    async function handleUnpublishCommunityResult() {
+        await unpublishCommunityResult(selectedSessionKey);
+        setCommunityResult(null);
+    }
+
     const {
         currentStep,
         isPending,
@@ -142,10 +152,10 @@ export default function Results() {
     } = useCommunityRankingReplay({
         replay,
         sessionKey: selectedSessionKey,
-        initialStatus: communityResult?.status ?? 'idle',
+        initialStatus: sessionStatus,
         enabled: isAdmin && replay.minimumVoterCountReached,
         onRevealStart: handleRevealStart,
-        onReplayCompleted: handleReplayCompleted,
+        onReplayCompleted: null,
     });
 
     const adminDisplayedRanking =
@@ -154,9 +164,6 @@ export default function Results() {
         currentStep?.latestAward?.participantCode ?? null;
     const isPointsAwardPhase =
         currentStep?.phase === COMMUNITY_REPLAY_PHASES.awardPoints;
-    const sessionStatus = communityResult?.status ?? 'idle';
-    const hasPublishedCommunityRanking =
-        sessionStatus === 'published' && publishedCommunityRanking.length > 0;
     const {
         activeTransfer,
         registerSourceRef,
@@ -185,8 +192,7 @@ export default function Results() {
 
             return {
                 ...entry,
-                totalPoints:
-                    entry.totalPoints - deductedPoints,
+                totalPoints: entry.totalPoints - deductedPoints,
             };
         });
     }, [activeTransfer, adminDisplayedRanking, currentStep]);
@@ -241,7 +247,7 @@ export default function Results() {
                             animatedTransfer={activeTransfer}
                             isPointsAwardPhase={isPointsAwardPhase}
                             registerAwardTargetRef={registerTargetRef}
-                            emptyMessage="Aucun point attribue pour le moment."
+                            emptyMessage="Aucun point attribué pour le moment."
                         />
                         <ResultsVoterRevealPanel
                             currentStep={currentStep}
@@ -255,6 +261,13 @@ export default function Results() {
                             onReplayStart={goToReplayStart}
                             onTogglePlayback={togglePlayback}
                             onNextReveal={goToNextReveal}
+                            onPublish={
+                                isCommunityResultPublished
+                                    ? handleUnpublishCommunityResult
+                                    : handlePublishCommunityResult
+                            }
+                            canPublish={isCompleted}
+                            isPublished={isCommunityResultPublished}
                             highlightedParticipantCode={highlightedParticipantCode}
                             registerAwardSourceRef={registerSourceRef}
                             isAdmin={true}
@@ -276,7 +289,7 @@ export default function Results() {
                     </div>
                 ) : (
                     <section className="results__messagePanel">
-                        Il faut au moins 2 votants valides pour établir le
+                        Il faut au moins 2 votes valides pour établir le
                         classement communautaire.
                     </section>
                 )
@@ -288,16 +301,35 @@ export default function Results() {
                     />
                     <ResultsVoterRankingsCarousel voters={replay.voters} />
                 </div>
-            ) : sessionStatus === 'revealing' ? (
-                <section className="results__messagePanel">
-                    Classement communautaire en cours, rends-toi sur la chaine
-                    de Fildraen pour y assister.
-                </section>
             ) : (
-                <section className="results__messagePanel">
-                    Les résultats ne sont pas encore disponibles pour cette
-                    session.
-                </section>
+                <div className="results__workspace">
+                    <ResultsCommunityRankingPanel
+                        title="Participants"
+                        ranking={replay.initialRanking}
+                        showPositions={false}
+                        showPoints={false}
+                    />
+                    <section className="results__panel results__panel--reveal">
+                        <header className="results__panelHeader">
+                            <h2 className="results__panelTitle">
+                                Reveal des votes
+                            </h2>
+                        </header>
+                        <div className="results__viewerRevealContent">
+                            <p className="results__voterCounter">
+                                {replay.voterCount} vote
+                                {replay.voterCount > 1 ? 's' : ''}{' '}
+                                comptabilisé
+                                {replay.voterCount > 1 ? 's' : ''}
+                            </p>
+                            <p className="results__revealPhaseText">
+                                Le classement communautaire n'apparaitra
+                                qu'après le reveal des votes sur la chaine de
+                                Fildraen.
+                            </p>
+                        </div>
+                    </section>
+                </div>
             )}
 
             {!isLoading && !errorMessage ? (

@@ -144,3 +144,23 @@ export async function publishCommunityResult(
         publishedAt: data.published_at ?? null,
     };
 }
+
+export async function unpublishCommunityResult(sessionKey) {
+    const user = await getCurrentUser();
+
+    if (!user) {
+        throw new Error('Utilisateur non connecte.');
+    }
+
+    const supabase = requireSupabase();
+    const { error } = await supabase
+        .from(COMMUNITY_RESULTS_TABLE)
+        .delete()
+        .eq('session_key', sessionKey);
+
+    if (error) {
+        throw error;
+    }
+
+    return null;
+}

@@ -3,6 +3,7 @@ import './ToggleSwitch.scss';
 export default function ToggleSwitch({
     checked = false,
     disabled = false,
+    inactive = false,
     onChange,
     className = '',
     actionLabelOn = 'Fermer les votes',
@@ -20,6 +21,7 @@ export default function ToggleSwitch({
             className={['toggleSwitch', className].filter(Boolean).join(' ')}
             data-checked={checked}
             data-disabled={disabled}
+            data-inactive={inactive}
             htmlFor={id}
         >
             <span className="toggleSwitch__actionLabel">

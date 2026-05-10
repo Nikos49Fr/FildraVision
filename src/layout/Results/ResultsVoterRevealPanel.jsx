@@ -6,6 +6,7 @@ import PauseIcon from '../../assets/logos/pause-solid-full.svg?react';
 import PlayIcon from '../../assets/logos/play-solid-full.svg?react';
 import QuestionIcon from '../../assets/logos/question-solid-full.svg?react';
 import ResultsCountryCard from '../../components/ResultsCountryCard/ResultsCountryCard';
+import ToggleSwitch from '../../components/ToggleSwitch/ToggleSwitch';
 import {
     COMMUNITY_REPLAY_ANIMATION_DURATIONS,
     COMMUNITY_REPLAY_PHASES,
@@ -82,22 +83,30 @@ export default function ResultsVoterRevealPanel({
     onReplayStart,
     onTogglePlayback,
     onNextReveal,
+    onPublish,
+    canPublish = false,
+    isPublished = false,
     highlightedParticipantCode = null,
     registerAwardSourceRef = null,
     isAdmin = false,
 }) {
     const voter = currentStep?.voter ?? null;
-    const voterNumber = currentStep?.voterIndex >= 0 ? currentStep.voterIndex + 1 : 0;
+    const voterNumber =
+        currentStep?.voterIndex >= 0 ? currentStep.voterIndex + 1 : 0;
     const revealStatusLabel = isPlaying ? 'En lecture' : 'En pause';
     const currentPhase = currentStep?.phase ?? null;
     const isIntroPhase = currentPhase === COMMUNITY_REPLAY_PHASES.intro;
     const isOutroPhase = currentPhase === COMMUNITY_REPLAY_PHASES.outro;
-    const isQuestionPhase = currentPhase === COMMUNITY_REPLAY_PHASES.questionEntry;
+    const isQuestionPhase =
+        currentPhase === COMMUNITY_REPLAY_PHASES.questionEntry;
+    const publishSwitchLocked = !isPublished && (isPending || !canPublish);
     const { registerItemRef } = useFlipListAnimation(
         currentStep?.revealedRanking ?? [],
         (participant) => participant.code,
         {
-            duration: getQuestionRevealDuration(COMMUNITY_REPLAY_ANIMATION_DURATIONS),
+            duration: getQuestionRevealDuration(
+                COMMUNITY_REPLAY_ANIMATION_DURATIONS,
+            ),
         },
     );
 
@@ -113,39 +122,63 @@ export default function ResultsVoterRevealPanel({
             </header>
 
             {isAdmin ? (
-                <div className="results__controls">
-                    <ControlButton
-                        label="Aller au debut du reveal"
-                        Icon={BackwardFastIcon}
-                        onClick={onReplayStart}
-                        disabled={isPending || isIntroPhase}
-                    />
-                    <ControlButton
-                        label="Pays precedent"
-                        Icon={BackwardStepIcon}
-                        onClick={onPreviousReveal}
-                        disabled={isPending || isIntroPhase}
-                    />
-                    <ControlButton
-                        label={isPlaying ? 'Mettre en pause' : 'Lancer la lecture'}
-                        Icon={isPlaying ? PauseIcon : PlayIcon}
-                        onClick={onTogglePlayback}
-                        disabled={isPending || isCompleted}
-                        primary={true}
-                        state={isPlaying ? 'playing' : 'paused'}
-                    />
-                    <ControlButton
-                        label="Pays suivant"
-                        Icon={ForwardStepIcon}
-                        onClick={onNextReveal}
-                        disabled={isPending || isCompleted}
-                    />
-                    <ControlButton
-                        label="Aller a la fin du reveal"
-                        Icon={ForwardFastIcon}
-                        onClick={onReplayEnd}
-                        disabled={isPending || isCompleted}
-                    />
+                <div className="results__controlsRow">
+                    <div className="results__controls">
+                        <ControlButton
+                            label="Aller au début du reveal"
+                            Icon={BackwardFastIcon}
+                            onClick={onReplayStart}
+                            disabled={isPending || isIntroPhase}
+                        />
+                        <ControlButton
+                            label="Pays précédent"
+                            Icon={BackwardStepIcon}
+                            onClick={onPreviousReveal}
+                            disabled={isPending || isIntroPhase}
+                        />
+                        <ControlButton
+                            label={
+                                isPlaying
+                                    ? 'Mettre en pause'
+                                    : 'Lancer la lecture'
+                            }
+                            Icon={isPlaying ? PauseIcon : PlayIcon}
+                            onClick={onTogglePlayback}
+                            disabled={isPending || isCompleted}
+                            primary={true}
+                            state={isPlaying ? 'playing' : 'paused'}
+                        />
+                        <ControlButton
+                            label="Pays suivant"
+                            Icon={ForwardStepIcon}
+                            onClick={onNextReveal}
+                            disabled={isPending || isCompleted}
+                        />
+                        <ControlButton
+                            label="Aller à la fin du reveal"
+                            Icon={ForwardFastIcon}
+                            onClick={onReplayEnd}
+                            disabled={isPending || isCompleted}
+                        />
+                    </div>
+                    <div className="results__publishControl">
+                        <ToggleSwitch
+                            id="results-publish-switch"
+                            className="results__publishSwitch"
+                            checked={isPublished}
+                            disabled={false}
+                            inactive={publishSwitchLocked}
+                            onChange={() => {
+                                if (publishSwitchLocked) {
+                                    return;
+                                }
+
+                                onPublish?.();
+                            }}
+                            actionLabelOn="Publié"
+                            actionLabelOff="Publié"
+                        />
+                    </div>
                 </div>
             ) : null}
 
@@ -161,15 +194,16 @@ export default function ResultsVoterRevealPanel({
                 </div>
             ) : isOutroPhase ? (
                 <div className="results__revealPhase results__revealPhase--outro">
-                    <p className="results__revealPhaseKicker">
-                        Reveal terminé
-                    </p>
+                    <p className="results__revealPhaseKicker">Reveal terminé</p>
                     <p className="results__revealPhaseText">
-                        Merci aux {voterCount} votants de votre participation et à
-                        votre contribution au classement communautaire.
+                        Merci aux {voterCount} votants pour votre participation
+                        et votre contribution au classement communautaire.
                     </p>
                     {voters.length > 0 ? (
-                        <ul className="results__votersList">
+                        <ul
+                            className="results__votersList"
+                            data-many-voters={voters.length > 12}
+                        >
                             {voters.map((currentVoter) => (
                                 <li
                                     key={currentVoter.userId}
@@ -191,7 +225,8 @@ export default function ResultsVoterRevealPanel({
                 <>
                     <div className="results__voterMeta">
                         <p className="results__voterCounter">
-                            Votant {voterNumber} / {currentStep?.voterCount ?? voterCount}
+                            Votant {voterNumber} /{' '}
+                            {currentStep?.voterCount ?? voterCount}
                         </p>
                         <div className="results__voterIdentity">
                             <VoterAvatar
@@ -213,13 +248,15 @@ export default function ResultsVoterRevealPanel({
                                 voter?.topTenRanking?.length ??
                                 EUROVISION_POINTS_BY_POSITION.length;
                             const revealedRankingStartIndex =
-                                topTenCount - currentStep.revealedRanking.length;
+                                topTenCount -
+                                currentStep.revealedRanking.length;
                             const rankingPosition =
                                 revealedRankingStartIndex + index + 1;
                             const revealedPoints =
                                 EUROVISION_POINTS_BY_POSITION[
                                     rankingPosition - 1
                                 ] ?? 0;
+
                             return (
                                 <li
                                     key={`${participant.code}-${index}`}
@@ -255,12 +292,14 @@ export default function ResultsVoterRevealPanel({
                                     </div>
                                     <span
                                         className={`results__revealedRankingPoints${
-                                            participant.code === highlightedParticipantCode
+                                            participant.code ===
+                                            highlightedParticipantCode
                                                 ? ' results__revealedRankingPoints--highlighted'
                                                 : ''
                                         }`}
                                         ref={
-                                            latestAward && registerAwardSourceRef
+                                            latestAward &&
+                                            registerAwardSourceRef
                                                 ? registerAwardSourceRef(
                                                       participant.code,
                                                   )

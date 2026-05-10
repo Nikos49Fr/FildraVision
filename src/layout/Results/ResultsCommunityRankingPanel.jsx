@@ -28,6 +28,8 @@ function PointsLabel({
 export default function ResultsCommunityRankingPanel({
     title,
     ranking,
+    showPositions = true,
+    showPoints = true,
     highlightedParticipantCode = null,
     highlightedScoreParticipantCode = null,
     highlightedScorePhase = null,
@@ -64,7 +66,11 @@ export default function ResultsCommunityRankingPanel({
                             <li
                                 key={entry.code}
                                 ref={registerItemRef(entry.code)}
-                                className="results__communityRankingItem"
+                                className={`results__communityRankingItem${
+                                    !showPoints
+                                        ? ' results__communityRankingItem--simple'
+                                        : ''
+                                }`}
                                 data-highlighted={
                                     entry.code === highlightedParticipantCode
                                 }
@@ -77,46 +83,56 @@ export default function ResultsCommunityRankingPanel({
                                     gridRow: placement.row,
                                 }}
                             >
-                                <div className="results__communityRankingMeta">
-                                    <span className="results__communityRankingPosition">
-                                        {entry.position}
-                                    </span>
+                                <div
+                                    className={`results__communityRankingMeta${
+                                        !showPositions
+                                            ? ' results__communityRankingMeta--noPosition'
+                                            : ''
+                                    }`}
+                                >
+                                    {showPositions ? (
+                                        <span className="results__communityRankingPosition">
+                                            {entry.position}
+                                        </span>
+                                    ) : null}
                                     <div className="results__communityRankingCard">
                                         <ResultsCountryCard
                                             country={entry.participant}
                                         />
                                     </div>
                                 </div>
-                                <span className="results__communityRankingPoints">
-                                    {isPointsAwardPhase &&
-                                    latestAward?.participantCode === entry.code ? (
-                                        <span
-                                            className="results__communityRankingTransferSlot"
-                                            ref={
-                                                registerAwardTargetRef
-                                                    ? registerAwardTargetRef(entry.code)
+                                {showPoints ? (
+                                    <span className="results__communityRankingPoints">
+                                        {isPointsAwardPhase &&
+                                        latestAward?.participantCode === entry.code ? (
+                                            <span
+                                                className="results__communityRankingTransferSlot"
+                                                ref={
+                                                    registerAwardTargetRef
+                                                        ? registerAwardTargetRef(entry.code)
+                                                        : null
+                                                }
+                                                data-active={
+                                                    animatedTransfer?.participantCode ===
+                                                    entry.code
+                                                }
+                                            />
+                                        ) : null}
+                                        <PointsLabel
+                                            points={entry.totalPoints}
+                                            className={`results__communityRankingTotal${
+                                                entry.code === highlightedScoreParticipantCode
+                                                    ? ' results__communityRankingTotal--highlighted'
+                                                    : ''
+                                            }`}
+                                            dataTransferPhase={
+                                                entry.code === highlightedScoreParticipantCode
+                                                    ? highlightedScorePhase
                                                     : null
                                             }
-                                            data-active={
-                                                animatedTransfer?.participantCode ===
-                                                entry.code
-                                            }
                                         />
-                                    ) : null}
-                                    <PointsLabel
-                                        points={entry.totalPoints}
-                                        className={`results__communityRankingTotal${
-                                            entry.code === highlightedScoreParticipantCode
-                                                ? ' results__communityRankingTotal--highlighted'
-                                                : ''
-                                        }`}
-                                        dataTransferPhase={
-                                            entry.code === highlightedScoreParticipantCode
-                                                ? highlightedScorePhase
-                                                : null
-                                        }
-                                    />
-                                </span>
+                                    </span>
+                                ) : null}
                             </li>
                         );
                     })}

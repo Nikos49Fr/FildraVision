@@ -1,6 +1,9 @@
 import { useMemo, useState } from 'react';
 import ResultsCountryCard from '../../components/ResultsCountryCard/ResultsCountryCard';
-import { getTwoColumnRankingItemPlacement } from './Results.helpers';
+import {
+    EUROVISION_POINTS_BY_POSITION,
+    getCommunityPointsLabelParts,
+} from './Results.helpers';
 
 function VoterAvatar({
     avatarUrl,
@@ -23,6 +26,17 @@ function VoterAvatar({
     );
 }
 
+function PointsLabel({ points }) {
+    const { value, suffix } = getCommunityPointsLabelParts(points);
+
+    return (
+        <>
+            <span className="results__pointsValue">{value}</span>{' '}
+            <span className="results__pointsSuffix">{suffix}</span>
+        </>
+    );
+}
+
 export default function ResultsVoterRankingsCarousel({
     voters,
 }) {
@@ -39,7 +53,7 @@ export default function ResultsVoterRankingsCarousel({
                     <h2 className="results__panelTitle">Classements des votants</h2>
                 </header>
                 <p className="results__emptyMessage">
-                    Aucun classement votant disponible pour cette session.
+                    Aucun classement disponible pour cette session.
                 </p>
             </section>
         );
@@ -60,14 +74,14 @@ export default function ResultsVoterRankingsCarousel({
     return (
         <section className="results__panel results__panel--carousel">
             <header className="results__panelHeader">
-                <h2 className="results__panelTitle">Classements des votants</h2>
+                <h2 className="results__panelTitle">Top 10 des votants</h2>
                 <div className="results__carouselControls">
                     <button
                         type="button"
                         className="results__controlButton"
                         onClick={goToPreviousVoter}
                     >
-                        Precedent
+                        Précédent
                     </button>
                     <button
                         type="button"
@@ -94,31 +108,24 @@ export default function ResultsVoterRankingsCarousel({
                 </div>
             </div>
 
-            <ol className="results__publishedRankingList">
-                {currentVoter.ranking.map((participant, index) => {
-                    const placement = getTwoColumnRankingItemPlacement(
-                        index,
-                        currentVoter.ranking.length,
-                    );
-
-                    return (
-                        <li
-                            key={`${currentVoter.userId}-${participant.code}`}
-                            className="results__publishedRankingItem"
-                            style={{
-                                gridColumn: placement.column,
-                                gridRow: placement.row,
-                            }}
-                        >
-                            <span className="results__communityRankingPosition">
-                                {index + 1}
-                            </span>
-                            <div className="results__publishedRankingCard">
-                                <ResultsCountryCard country={participant} />
-                            </div>
-                        </li>
-                    );
-                })}
+            <ol className="results__revealedRankingList">
+                {currentVoter.topTenRanking.map((participant, index) => (
+                    <li
+                        key={`${currentVoter.userId}-${participant.code}`}
+                        className="results__revealedRankingItem"
+                    >
+                        <div className="results__revealedRankingCard">
+                            <ResultsCountryCard country={participant} />
+                        </div>
+                        <span className="results__revealedRankingPoints">
+                            <PointsLabel
+                                points={
+                                    EUROVISION_POINTS_BY_POSITION[index] ?? 0
+                                }
+                            />
+                        </span>
+                    </li>
+                ))}
             </ol>
         </section>
     );

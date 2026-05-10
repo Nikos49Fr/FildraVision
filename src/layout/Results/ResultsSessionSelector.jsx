@@ -4,7 +4,7 @@ export default function ResultsSessionSelector({
     onChange,
 }) {
     return (
-        <nav className="results__sessionSelector" aria-label="Selection de session">
+        <nav className="results__sessionSelector" aria-label="Sélection de session">
             {sessionConfigs.map((sessionConfig) => (
                 <button
                     key={sessionConfig.sessionKey}

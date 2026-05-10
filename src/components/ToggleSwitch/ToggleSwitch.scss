@@ -1,6 +1,14 @@
 @use './../../styles/variables' as *;
 
 .toggleSwitch {
+    --toggle-switch-track-bg: #{rgb($secondary-color, 0.92)};
+    --toggle-switch-track-border: #{rgb($primary-color, 0.18)};
+    --toggle-switch-thumb-bg: #{$color-accent};
+    --toggle-switch-track-bg-checked: #{rgb($secondary-color, 0.92)};
+    --toggle-switch-track-border-checked: #{rgb($primary-color, 0.2)};
+    --toggle-switch-thumb-bg-checked: #{$color-success-soft};
+    --toggle-switch-disabled-opacity: 1;
+
     display: inline-flex;
     align-items: center;
     gap: 0.8rem;
@@ -9,7 +17,23 @@
 
     &[data-disabled='true'] {
         cursor: not-allowed;
-        opacity: 0.65;
+        opacity: var(--toggle-switch-disabled-opacity);
+        --toggle-switch-track-bg: #{rgb($secondary-color, 0.62)};
+        --toggle-switch-track-border: #{rgb($primary-color, 0.1)};
+        --toggle-switch-track-bg-checked: #{rgb($secondary-color, 0.62)};
+        --toggle-switch-track-border-checked: #{rgb($primary-color, 0.1)};
+        --toggle-switch-thumb-bg: #{rgb($primary-color, 0.46)};
+        --toggle-switch-thumb-bg-checked: #{rgb($primary-color, 0.46)};
+    }
+
+    &[data-inactive='true'] {
+        cursor: not-allowed;
+        --toggle-switch-track-bg: #{rgb($secondary-color, 0.62)};
+        --toggle-switch-track-border: #{rgb($primary-color, 0.1)};
+        --toggle-switch-track-bg-checked: #{rgb($secondary-color, 0.62)};
+        --toggle-switch-track-border-checked: #{rgb($primary-color, 0.1)};
+        --toggle-switch-thumb-bg: #{rgb($primary-color, 0.46)};
+        --toggle-switch-thumb-bg-checked: #{rgb($primary-color, 0.46)};
     }
 
     &__input {
@@ -29,8 +53,8 @@
         width: 3.6rem;
         height: 2rem;
         border-radius: 999px;
-        background-color: rgb(22 30 41 / 0.14);
-        border: 1px solid rgb(22 30 41 / 0.22);
+        background-color: var(--toggle-switch-track-bg);
+        border: 1px solid var(--toggle-switch-track-border);
         transition:
             background-color 180ms ease-in-out,
             border-color 180ms ease-in-out;
@@ -43,7 +67,7 @@
         width: 1.4rem;
         height: 1.4rem;
         border-radius: 999px;
-        background-color: $secondary-color;
+        background-color: var(--toggle-switch-thumb-bg);
         box-shadow: 0 2px 8px rgb(0 0 0 / 0.28);
         transition:
             transform 180ms ease-in-out,
@@ -52,13 +76,13 @@
 
     &[data-checked='true'] {
         .toggleSwitch__track {
-            background-color: rgb(88 185 106 / 0.42);
-            border-color: rgb(88 185 106 / 0.5);
+            background-color: var(--toggle-switch-track-bg-checked);
+            border-color: var(--toggle-switch-track-border-checked);
         }
 
         .toggleSwitch__thumb {
             transform: translateX(1.55rem);
-            background-color: #fff;
+            background-color: var(--toggle-switch-thumb-bg-checked);
         }
     }
 }
