@@ -2,16 +2,7 @@
 @use './../../styles/variables' as *;
 
 :root {
-    /* Colonnes */
-    --results-reveal-points-column-width: 3rem;
-    --results-community-points-column-width: 4rem;
-    --results-community-points-column-width-award: 7rem;
-    --results-ranking-columns-gap: 1.5rem;
-    --results-ranking-divider-color: #{rgb($primary-color, 0.18)};
-    --results-transfer-align-x: -20%;
-    --results-floating-tag-height: 1.875rem;
     --results-score-highlight-delay-duration: 100ms;
-    --results-score-tag-offset-x: 10px;
 
     /* Replay - introduction du votant */
     --results-voter-intro-duration: 1200ms;
@@ -216,7 +207,7 @@
         position: relative;
         display: grid;
         grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-        column-gap: var(--results-ranking-columns-gap);
+        column-gap: 1.5rem;
         row-gap: 0;
         list-style: none;
         padding: 0;
@@ -230,7 +221,7 @@
             left: 50%;
             width: 1px;
             transform: translateX(-50%);
-            background-color: var(--results-ranking-divider-color);
+            background-color: rgb($primary-color, 0.18);
             z-index: 1;
             pointer-events: none;
         }
@@ -271,7 +262,7 @@
         display: grid;
         grid-template-columns:
             minmax(0, 1fr)
-            var(--results-community-points-column-width);
+            4rem;
         align-items: center;
         transition:
             transform var(--results-ranking-reorder-duration)
@@ -289,7 +280,7 @@
         background-color: rgb($color-success-soft, 0.08);
         grid-template-columns:
             minmax(0, 1fr)
-            var(--results-community-points-column-width-award);
+            7rem;
     }
 
     &__communityRankingMeta {
@@ -355,7 +346,7 @@
         top: 50%;
         transform: translateY(-50%);
         width: 0;
-        height: var(--results-floating-tag-height);
+        height: 1.875rem;
         display: inline-block;
         transition: width 180ms ease-in-out;
     }
@@ -473,7 +464,7 @@
         background-color: rgb($color-success-soft, 0.72);
         color: $primary-color;
         align-items: center;
-        transform: translateX(var(--results-score-tag-offset-x));
+        transform: translateX(10px);
     }
 
     &__communityRankingTotal--highlighted[data-transfer-phase='pre-count'] {
@@ -496,7 +487,7 @@
         display: grid;
         grid-template-columns:
             minmax(0, 1fr)
-            var(--results-reveal-points-column-width);
+            3rem;
         align-items: center;
         padding: 0.35rem;
         border-radius: 18px;
@@ -644,8 +635,8 @@
         left: 0;
         top: 0;
         z-index: 20;
-        height: var(--results-floating-tag-height);
-        min-height: var(--results-floating-tag-height);
+        height: 1.875rem;
+        min-height: 1.875rem;
         padding: 0.35rem 0.65rem;
         border-radius: 16px;
         background-color: $color-accent;
@@ -674,14 +665,14 @@
     &__floatingPointsTag[data-phase='pre-count'],
     &__floatingPointsTag[data-phase='count'] {
         transform: translate(
-            calc(var(--results-transfer-x) - var(--results-transfer-align-x)),
+            calc(var(--results-transfer-x) - -20%),
             calc(var(--results-transfer-y) - 50%)
         );
     }
 
     &__floatingPointsTag[data-phase='fade-out'] {
         transform: translate(
-            calc(var(--results-transfer-x) - var(--results-transfer-align-x)),
+            calc(var(--results-transfer-x) - -20%),
             calc(var(--results-transfer-y) - 50%)
         );
         animation: results-points-transfer-fade-out
@@ -707,12 +698,33 @@
         &__controlButton--labelled {
             font-size: 0.92rem;
         }
-    }
-
-    @media (max-width: 768px) {
         &__messagePanel,
         &__panel,
         &__sessionHeader {
+            padding: 0.5rem;
+        }
+        &__communityRankingMeta {
+            grid-template-columns: 1rem minmax(0, 1fr);
+        }
+        &__communityRankingPosition {
+            width: 1rem;
+            font-size: 0.9rem;
+        }
+
+        &__communityRankingPoints {
+            gap: 0.5rem;
+        }
+
+        &__communityRankingTotal,
+        &__communityRankingDelta,
+        &__revealedRankingPoints {
+            gap: 0.4rem;
+            font-size: 0.9rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+        &__workspace {
             padding: 0.5rem;
         }
         &__sessionHeader,
@@ -729,6 +741,28 @@
             font-size: 0.8rem;
         }
 
+        &__messagePanel,
+        &__panel,
+        &__sessionHeader {
+            padding: 0.5rem;
+        }
+        &__communityRankingMeta {
+            grid-template-columns: 1rem minmax(0, 1fr);
+        }
+        &__communityRankingPosition {
+            width: 1rem;
+            font-size: 0.8rem;
+        }
+
+        &__communityRankingPoints {
+            gap: 0.5rem;
+        }
+        &__communityRankingTotal,
+        &__communityRankingDelta,
+        &__revealedRankingPoints {
+            gap: 0.4rem;
+            font-size: 0.8rem;
+        }
         &__communityRankingPoints,
         &__revealedRankingPoints {
             text-align: left;
@@ -755,10 +789,6 @@
         &__revealedRankingItem,
         &__revealedRankingPoints {
             align-items: center;
-        }
-
-        &__workspace {
-            padding: 0.5rem;
         }
     }
 }
@@ -851,7 +881,7 @@
 
     to {
         transform: translate(
-            calc(var(--results-transfer-x) - var(--results-transfer-align-x)),
+            calc(var(--results-transfer-x) - -20%),
             calc(var(--results-transfer-y) - 50%)
         );
     }
@@ -861,7 +891,7 @@
     from {
         opacity: 1;
         transform: translate(
-            calc(var(--results-transfer-x) - var(--results-transfer-align-x)),
+            calc(var(--results-transfer-x) - -20%),
             calc(var(--results-transfer-y) - 50%)
         );
     }

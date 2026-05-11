@@ -5,10 +5,8 @@
     color: $primary-color;
     @include drop-shadow();
     &__wrapper {
-        display: flex;
-        gap: 0.5vw;
-        padding: 0.8vw;
-        padding-left: 1.5vw;
+        padding: 0.8rem;
+        padding-left: 1.5rem;
         width: 100%;
         max-width: 100%;
         background: linear-gradient(
@@ -52,5 +50,40 @@
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
+    }
+
+    @media (max-width: 1024px) {
+        &__wrapper {
+            padding: 0.8rem;
+            padding-left: 1.2rem;
+            border-radius: 0.7rem;
+        }
+        &__country {
+            font-size: 0.9rem;
+            padding: 0.2rem 1rem 0.1rem;
+            padding-left: 1.5rem;
+        }
+        &__flag {
+            max-width: 2rem;
+            top: -0.4rem;
+            left: -0.6rem;
+        }
+    }
+    @media (max-width: 768px) {
+        &__wrapper {
+            padding: 0.6rem;
+            padding-left: 1rem;
+            border-radius: 0.6rem;
+        }
+        &__country {
+            font-size: 0.75rem;
+            padding: 0.2rem 1rem 0.1rem;
+            padding-left: 1.5rem;
+        }
+        &__flag {
+            max-width: 1.8rem;
+            top: -0.4rem;
+            left: -0.4rem;
+        }
     }
 }
