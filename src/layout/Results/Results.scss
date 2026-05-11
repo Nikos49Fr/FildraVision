@@ -35,8 +35,7 @@
     gap: 1rem;
 
     &__messagePanel,
-    &__panel,
-    &__sessionHeader {
+    &__panel {
         border: 1px solid rgb($secondary-color, 0.2);
         border-radius: 20px;
         background-color: $secondary-color;
@@ -44,7 +43,6 @@
         @include drop-shadow();
     }
 
-    &__sessionTitle,
     &__panelTitle {
         color: $primary-color;
     }
@@ -699,8 +697,7 @@
             font-size: 0.92rem;
         }
         &__messagePanel,
-        &__panel,
-        &__sessionHeader {
+        &__panel {
             padding: 0.5rem;
         }
         &__communityRankingMeta {
@@ -711,14 +708,9 @@
             font-size: 0.9rem;
         }
 
-        &__communityRankingPoints {
-            gap: 0.5rem;
-        }
-
         &__communityRankingTotal,
         &__communityRankingDelta,
         &__revealedRankingPoints {
-            gap: 0.4rem;
             font-size: 0.9rem;
         }
     }
@@ -727,11 +719,6 @@
         &__workspace {
             padding: 0.5rem;
         }
-        &__sessionHeader,
-        &__panelHeader {
-            flex-direction: column;
-        }
-
         &__sessionButton {
             font-size: 0.8rem;
             padding: 0.5rem;
@@ -742,25 +729,17 @@
         }
 
         &__messagePanel,
-        &__panel,
-        &__sessionHeader {
+        &__panel {
             padding: 0.5rem;
-        }
-        &__communityRankingMeta {
-            grid-template-columns: 1rem minmax(0, 1fr);
         }
         &__communityRankingPosition {
             width: 1rem;
             font-size: 0.8rem;
         }
 
-        &__communityRankingPoints {
-            gap: 0.5rem;
-        }
         &__communityRankingTotal,
         &__communityRankingDelta,
         &__revealedRankingPoints {
-            gap: 0.4rem;
             font-size: 0.8rem;
         }
         &__communityRankingPoints,
@@ -768,8 +747,7 @@
             text-align: left;
         }
 
-        &__communityRankingList,
-        &__publishedRankingList {
+        &__communityRankingList {
             display: flex;
             flex-direction: column;
 
@@ -778,15 +756,6 @@
             }
         }
 
-        &__communityRankingItem {
-            align-items: center;
-        }
-
-        &__communityRankingPoints {
-            align-items: center;
-        }
-
-        &__revealedRankingItem,
         &__revealedRankingPoints {
             align-items: center;
         }
