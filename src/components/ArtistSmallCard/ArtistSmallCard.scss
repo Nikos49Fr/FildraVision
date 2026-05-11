@@ -73,6 +73,13 @@
         padding: 1cqw 2cqw;
         padding-left: 8cqw;
     }
+    &__artist,
+    &__song {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
     &__country {
         color: $secondary-color;
         background-color: $primary-color;
@@ -90,8 +97,5 @@
     &__artist {
         font-family: var(--font-title);
         font-weight: 500;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
     }
 }

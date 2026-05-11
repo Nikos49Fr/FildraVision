@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import {
     COMMUNITY_REPLAY_ANIMATION_DURATIONS,
     COMMUNITY_REPLAY_PHASES,
-} from './Results.helpers';
+} from './CommunityResults.helpers';
 
 function getElementCenterPosition(elementRect, containerRect) {
     return {

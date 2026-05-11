@@ -1,9 +1,9 @@
-import ResultsCountryCard from '../../components/ResultsCountryCard/ResultsCountryCard';
+import ResultsCountryCard from '../../../components/ResultsCountryCard/ResultsCountryCard';
 import {
     COMMUNITY_REPLAY_ANIMATION_DURATIONS,
     getCommunityPointsLabelParts,
     getTwoColumnRankingItemPlacement,
-} from './Results.helpers';
+} from './CommunityResults.helpers';
 import useFlipListAnimation from './useFlipListAnimation';
 
 function PointsLabel({

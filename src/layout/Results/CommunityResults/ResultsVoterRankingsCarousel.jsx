@@ -1,9 +1,9 @@
 import { useMemo, useState } from 'react';
-import ResultsCountryCard from '../../components/ResultsCountryCard/ResultsCountryCard';
+import ResultsCountryCard from '../../../components/ResultsCountryCard/ResultsCountryCard';
 import {
     EUROVISION_POINTS_BY_POSITION,
     getCommunityPointsLabelParts,
-} from './Results.helpers';
+} from './CommunityResults.helpers';
 
 function VoterAvatar({
     avatarUrl,

@@ -1,19 +1,19 @@
-import BackwardFastIcon from '../../assets/logos/backward-fast-solid-full.svg?react';
-import BackwardStepIcon from '../../assets/logos/backward-step-solid-full.svg?react';
-import ForwardFastIcon from '../../assets/logos/forward-fast-solid-full.svg?react';
-import ForwardStepIcon from '../../assets/logos/forward-step-solid-full.svg?react';
-import PauseIcon from '../../assets/logos/pause-solid-full.svg?react';
-import PlayIcon from '../../assets/logos/play-solid-full.svg?react';
-import QuestionIcon from '../../assets/logos/question-solid-full.svg?react';
-import ResultsCountryCard from '../../components/ResultsCountryCard/ResultsCountryCard';
-import ToggleSwitch from '../../components/ToggleSwitch/ToggleSwitch';
+import BackwardFastIcon from '../../../assets/logos/backward-fast-solid-full.svg?react';
+import BackwardStepIcon from '../../../assets/logos/backward-step-solid-full.svg?react';
+import ForwardFastIcon from '../../../assets/logos/forward-fast-solid-full.svg?react';
+import ForwardStepIcon from '../../../assets/logos/forward-step-solid-full.svg?react';
+import PauseIcon from '../../../assets/logos/pause-solid-full.svg?react';
+import PlayIcon from '../../../assets/logos/play-solid-full.svg?react';
+import QuestionIcon from '../../../assets/logos/question-solid-full.svg?react';
+import ResultsCountryCard from '../../../components/ResultsCountryCard/ResultsCountryCard';
+import ToggleSwitch from '../../../components/ToggleSwitch/ToggleSwitch';
 import {
     COMMUNITY_REPLAY_ANIMATION_DURATIONS,
     COMMUNITY_REPLAY_PHASES,
     EUROVISION_POINTS_BY_POSITION,
     getCommunityPointsLabelParts,
     getQuestionRevealDuration,
-} from './Results.helpers';
+} from './CommunityResults.helpers';
 import useFlipListAnimation from './useFlipListAnimation';
 
 function VoterAvatar({

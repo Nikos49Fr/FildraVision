@@ -6,7 +6,7 @@ import {
     findNextManualReplayStepIndex,
     findPreviousManualReplayStepIndex,
     getReplayStepDelay,
-} from './Results.helpers';
+} from './CommunityResults.helpers';
 
 export default function useCommunityRankingReplay({
     replay,

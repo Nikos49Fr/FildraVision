@@ -3,12 +3,12 @@ import {
     finalParticipants,
     semiFinal1Participants,
     semiFinal2Participants,
-} from '../../datas/countries';
+} from '../../../datas/countries';
 import {
     USER_RANKING_SESSIONS,
     getRankingCodes,
     getRankingFromCodes,
-} from '../../utils/helpers/rankingsPersistence';
+} from '../../../utils/helpers/rankingsPersistence';
 
 export const COMMUNITY_RESULT_STATUSES = {
     idle: 'idle',

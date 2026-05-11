@@ -12,7 +12,7 @@ import {
     getTwoColumnRankingItemPlacement,
     isManualReplayStep,
     serializeCommunityRankingSnapshot,
-} from './Results.helpers.js';
+} from './CommunityResults.helpers.js';
 
 function createUserRanking({
     userId,
