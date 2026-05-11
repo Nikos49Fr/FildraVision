@@ -199,7 +199,7 @@ export default function IndividualResults({ selectedSessionKey }) {
                     getOfficialRankingState(selectedSessionKey),
                     getCommunityResult(selectedSessionKey),
                     getSessionUserRankings(selectedSessionKey),
-                    getCurrentUser(),
+                    getCurrentUser().catch(() => null),
                 ]);
 
                 if (!isMounted) {
@@ -263,10 +263,8 @@ export default function IndividualResults({ selectedSessionKey }) {
             return currentUserVoter.userId;
         }
 
-        return (
-            leaderboard.find((entry) => !entry.isCommunity)?.id ?? voters[0].userId
-        );
-    }, [currentUserId, leaderboard, voters]);
+        return voters[0].userId;
+    }, [currentUserId, voters]);
 
     const selectedVoter =
         voters.find((voter) => voter.userId === selectedVoterId) ?? null;
