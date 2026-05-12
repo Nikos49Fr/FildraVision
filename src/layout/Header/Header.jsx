@@ -1,5 +1,5 @@
 import './Header.scss';
-import eurovisionLogo from './../../assets/logos/eurovision-logo.png';
+import eurovisionLogo from './../../assets/logos/FildraVision-logo-v6.png';
 import EurovisionSmallLogo from './../../assets/flags/flag_at.svg?react';
 import Nav from '../../components/Nav/Nav';
 import FactsCarousel from '../../components/FactsCarousel/FactsCarousel';

@@ -1,6 +1,7 @@
 import './ArtistCard.scss';
 import MicroIcon from '../../assets/logos/microphone.svg?react';
 import MusicIcon from '../../assets/logos/music.svg?react';
+import { getParticipantSongUrl } from '../../utils/helpers/participants';
 
 const flags = import.meta.glob('/src/assets/flags/*.svg', { eager: true });
 const singers = import.meta.glob('/src/assets/singers/*.webp', {
@@ -15,6 +16,7 @@ export default function ArtistCard({ country }) {
     const singer =
         singers[`/src/assets/singers/${country.code.toLowerCase()}-singer.webp`]
             ?.default;
+    const songUrl = getParticipantSongUrl(country);
 
     return (
         <article className="artistCard">
@@ -30,10 +32,28 @@ export default function ArtistCard({ country }) {
                         {/* <MicroIcon className="micro-icon"/> */}
                         <div>{country.artist}</div>
                     </div>
-                    <div className="song">
-                        <MusicIcon className="music-icon" aria-hidden="true" />
-                        <div>{country.song}</div>
-                    </div>
+                    {songUrl ? (
+                        <a
+                            className="song song--link"
+                            href={songUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                        >
+                            <MusicIcon
+                                className="music-icon"
+                                aria-hidden="true"
+                            />
+                            <div>{country.song}</div>
+                        </a>
+                    ) : (
+                        <div className="song">
+                            <MusicIcon
+                                className="music-icon"
+                                aria-hidden="true"
+                            />
+                            <div>{country.song}</div>
+                        </div>
+                    )}
                     <div className="country">
                         <img
                             className="flag-icon"

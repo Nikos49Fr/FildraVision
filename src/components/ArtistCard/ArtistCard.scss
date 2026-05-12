@@ -91,11 +91,27 @@
         padding-left: 10cqw;
         font-size: 6cqw;
         margin-bottom: 2cqw;
+        text-decoration: none;
 
         & .music-icon {
             max-width: 8cqw;
             position: absolute;
             left: 1cqw;
+        }
+    }
+
+    & .song--link {
+        transition:
+            transform 120ms ease-in-out,
+            background-color 120ms ease-in-out,
+            box-shadow 120ms ease-in-out;
+
+        &:hover,
+        &:focus-visible {
+            background-color: rgb($primary-color, 0.86);
+            box-shadow: 0 0 0 2px rgb($twitch-color, 0.18);
+            transform: translateY(-1px);
+            outline: none;
         }
     }
     & .country {
