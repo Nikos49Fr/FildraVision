@@ -4,6 +4,11 @@ import {
     getCommunityRankingVoters,
 } from '../CommunityResults/CommunityResults.helpers';
 import { getResultsSessionConfig } from '../shared/resultsShared';
+import {
+    getOfficialResultType,
+    getQualifiedParticipantCodesFromOfficialRankingCodes,
+    OFFICIAL_RESULT_TYPES,
+} from '../../../utils/helpers/officialResults';
 
 export const INDIVIDUAL_RESULTS_VIEW_KEYS = {
     podium: 'podium',
@@ -23,6 +28,7 @@ export const INDIVIDUAL_RESULTS_VIEW_ITEMS = [
 ];
 
 const PODIUM_BONUS_POINTS = [20, 16, 14];
+const QUALIFICATION_POINTS_BY_POSITION = [10, 9, 8, 7, 6, 5, 4, 3, 2, 1];
 
 function getParticipantsByCode() {
     return new Map(
@@ -110,6 +116,14 @@ export function getPlacementScore(positionDelta) {
     return 0;
 }
 
+export function getQualificationScore(predictedPosition, isQualified) {
+    if (!isQualified || predictedPosition < 1 || predictedPosition > 10) {
+        return 0;
+    }
+
+    return QUALIFICATION_POINTS_BY_POSITION[predictedPosition - 1] ?? 0;
+}
+
 export function getPodiumBonus(predictedPosition, officialPosition) {
     if (predictedPosition !== officialPosition || officialPosition > 3) {
         return 0;
@@ -152,6 +166,34 @@ export function buildIndividualRankingBreakdown(
     });
 }
 
+export function buildQualificationRankingBreakdown(
+    predictedRanking,
+    qualifiedParticipantCodes,
+) {
+    const qualifiedCodes = new Set(qualifiedParticipantCodes);
+
+    return predictedRanking.map((participant, index) => {
+        const predictedPosition = index + 1;
+        const isQualified = qualifiedCodes.has(participant.code);
+        const qualificationPoints = getQualificationScore(
+            predictedPosition,
+            isQualified,
+        );
+
+        return {
+            code: participant.code,
+            participant,
+            predictedPosition,
+            officialPosition: isQualified ? 1 : null,
+            positionDelta: isQualified ? 0 : Number.POSITIVE_INFINITY,
+            placementPoints: qualificationPoints,
+            podiumBonus: 0,
+            totalPoints: qualificationPoints,
+            isQualified,
+        };
+    });
+}
+
 export function getIndividualTotalScore(rankingBreakdown) {
     return rankingBreakdown.reduce(
         (totalScore, entry) => totalScore + entry.totalPoints,
@@ -160,17 +202,26 @@ export function getIndividualTotalScore(rankingBreakdown) {
 }
 
 export function buildIndividualLeaderboard({
+    sessionKey,
     officialRanking,
+    qualifiedParticipantCodes,
     communityRanking,
     voters,
 }) {
+    const officialResultType = getOfficialResultType(sessionKey);
     const leaderboard = [];
 
     if (communityRanking?.length > 0) {
-        const rankingBreakdown = buildIndividualRankingBreakdown(
-            communityRanking,
-            officialRanking,
-        );
+        const rankingBreakdown =
+            officialResultType === OFFICIAL_RESULT_TYPES.qualification
+                ? buildQualificationRankingBreakdown(
+                      communityRanking,
+                      qualifiedParticipantCodes,
+                  )
+                : buildIndividualRankingBreakdown(
+                      communityRanking,
+                      officialRanking,
+                  );
 
         leaderboard.push({
             id: 'community',
@@ -186,10 +237,16 @@ export function buildIndividualLeaderboard({
     }
 
     voters.forEach((voter) => {
-        const rankingBreakdown = buildIndividualRankingBreakdown(
-            voter.ranking,
-            officialRanking,
-        );
+        const rankingBreakdown =
+            officialResultType === OFFICIAL_RESULT_TYPES.qualification
+                ? buildQualificationRankingBreakdown(
+                      voter.ranking,
+                      qualifiedParticipantCodes,
+                  )
+                : buildIndividualRankingBreakdown(
+                      voter.ranking,
+                      officialRanking,
+                  );
 
         leaderboard.push({
             id: voter.userId,
@@ -262,6 +319,7 @@ export function getIndividualResultsState({
     userRankings,
 }) {
     const participants = getIndividualParticipants(sessionKey);
+    const officialResultType = getOfficialResultType(sessionKey);
     const isOfficialRankingPublished = Boolean(officialRankingState?.isPublished);
     const officialRanking = isOfficialRankingPublished
         ? getIndividualRankingFromCodes(
@@ -279,11 +337,19 @@ export function getIndividualResultsState({
     const communityRanking = communityRankingEntries.length
         ? getIndividualCommunityRanking(sessionKey, communityRankingEntries)
         : [];
+    const qualifiedParticipantCodes =
+        officialResultType === OFFICIAL_RESULT_TYPES.qualification
+            ? getQualifiedParticipantCodesFromOfficialRankingCodes(
+                  officialRankingState?.rankingCodes,
+              )
+            : [];
     const isCommunityRankingPublished =
         communityResult?.status === 'published' && communityRanking.length > 0;
     const leaderboard = isOfficialRankingPublished
         ? buildIndividualLeaderboard({
+              sessionKey,
               officialRanking,
+              qualifiedParticipantCodes,
               communityRanking: isCommunityRankingPublished
                   ? communityRanking
                   : [],
@@ -297,6 +363,8 @@ export function getIndividualResultsState({
         voters,
         leaderboard,
         communityRanking,
+        qualifiedParticipantCodes,
+        officialResultType,
         isOfficialRankingPublished,
         isCommunityRankingPublished,
     };

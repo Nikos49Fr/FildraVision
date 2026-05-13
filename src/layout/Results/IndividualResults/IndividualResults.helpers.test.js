@@ -2,11 +2,13 @@ import { describe, expect, test } from 'vitest';
 import {
     buildIndividualLeaderboard,
     buildIndividualRankingBreakdown,
+    buildQualificationRankingBreakdown,
     formatIndividualPointsLabel,
     getIndividualParticipants,
     getIndividualPointsLabelParts,
     getPlacementScore,
     getPodiumBonus,
+    getQualificationScore,
 } from './IndividualResults.helpers.js';
 
 const PARTICIPANTS = getIndividualParticipants('semi_final_1');
@@ -81,8 +83,10 @@ describe('IndividualResults.helpers', () => {
         ];
 
         const leaderboard = buildIndividualLeaderboard({
+            sessionKey: 'final',
             officialRanking,
             communityRanking,
+            qualifiedParticipantCodes: [],
             voters,
         });
 
@@ -105,5 +109,44 @@ describe('IndividualResults.helpers', () => {
             value: '7',
             suffix: 'pts',
         });
+    });
+
+    test('getQualificationScore rewards only qualified songs inside the top 10', () => {
+        expect(getQualificationScore(1, true)).toBe(10);
+        expect(getQualificationScore(5, true)).toBe(6);
+        expect(getQualificationScore(10, true)).toBe(1);
+        expect(getQualificationScore(11, true)).toBe(0);
+        expect(getQualificationScore(3, false)).toBe(0);
+    });
+
+    test('buildQualificationRankingBreakdown scores semi-final predictions from the qualified set only', () => {
+        const predictedRanking = PARTICIPANTS;
+        const qualifiedParticipantCodes = [
+            PARTICIPANTS[0].code,
+            PARTICIPANTS[2].code,
+            PARTICIPANTS[9].code,
+        ];
+
+        const breakdown = buildQualificationRankingBreakdown(
+            predictedRanking,
+            qualifiedParticipantCodes,
+        );
+
+        expect(breakdown[0]).toMatchObject({
+            code: PARTICIPANTS[0].code,
+            totalPoints: 10,
+            isQualified: true,
+        });
+        expect(breakdown[1]).toMatchObject({
+            code: PARTICIPANTS[1].code,
+            totalPoints: 0,
+            isQualified: false,
+        });
+        expect(breakdown[9]).toMatchObject({
+            code: PARTICIPANTS[9].code,
+            totalPoints: 1,
+            isQualified: true,
+        });
+        expect(breakdown[10].totalPoints).toBe(0);
     });
 });

@@ -22,10 +22,12 @@ export default function Admin() {
     } = useVoteAvailability();
     const {
         ranking: semiFinal1OfficialRanking,
+        boardState: semiFinal1OfficialBoardState,
         handleRankingChange: handleSemiFinal1OfficialRankingChange,
         handleRankingSave: handleSemiFinal1OfficialRankingSave,
         saveStatus: semiFinal1OfficialRankingSaveStatus,
         isPublished: isSemiFinal1OfficialRankingPublished,
+        isQualificationResult: isSemiFinal1OfficialQualificationResult,
         isPublicationSwitchDisabled:
             isSemiFinal1OfficialRankingPublicationSwitchDisabled,
         handlePublicationChange:
@@ -39,10 +41,12 @@ export default function Admin() {
     });
     const {
         ranking: semiFinal2OfficialRanking,
+        boardState: semiFinal2OfficialBoardState,
         handleRankingChange: handleSemiFinal2OfficialRankingChange,
         handleRankingSave: handleSemiFinal2OfficialRankingSave,
         saveStatus: semiFinal2OfficialRankingSaveStatus,
         isPublished: isSemiFinal2OfficialRankingPublished,
+        isQualificationResult: isSemiFinal2OfficialQualificationResult,
         isPublicationSwitchDisabled:
             isSemiFinal2OfficialRankingPublicationSwitchDisabled,
         handlePublicationChange:
@@ -75,6 +79,8 @@ export default function Admin() {
             <AdminRankingSection
                 title="Demi-Finale 1"
                 ranking={semiFinal1OfficialRanking}
+                boardState={semiFinal1OfficialBoardState}
+                isQualificationResult={isSemiFinal1OfficialQualificationResult}
                 onRankingChange={handleSemiFinal1OfficialRankingChange}
                 onRankingSave={handleSemiFinal1OfficialRankingSave}
                 saveStatus={semiFinal1OfficialRankingSaveStatus}
@@ -107,6 +113,8 @@ export default function Admin() {
             <AdminRankingSection
                 title="Demi-Finale 2"
                 ranking={semiFinal2OfficialRanking}
+                boardState={semiFinal2OfficialBoardState}
+                isQualificationResult={isSemiFinal2OfficialQualificationResult}
                 onRankingChange={handleSemiFinal2OfficialRankingChange}
                 onRankingSave={handleSemiFinal2OfficialRankingSave}
                 saveStatus={semiFinal2OfficialRankingSaveStatus}

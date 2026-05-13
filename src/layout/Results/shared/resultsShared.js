@@ -3,6 +3,7 @@ import {
     semiFinal1Participants,
     semiFinal2Participants,
 } from '../../../datas/countries';
+import { getOfficialResultType } from '../../../utils/helpers/officialResults';
 import { USER_RANKING_SESSIONS } from '../../../utils/helpers/rankingsPersistence';
 
 export const RESULTS_VIEW_CONFIGS = [
@@ -21,16 +22,25 @@ export const RESULTS_SESSION_CONFIGS = {
         sessionKey: USER_RANKING_SESSIONS.semiFinal1UserRanking,
         title: 'Demi-Finale 1',
         participantCodes: semiFinal1Participants,
+        officialResultType: getOfficialResultType(
+            USER_RANKING_SESSIONS.semiFinal1UserRanking,
+        ),
     },
     [USER_RANKING_SESSIONS.semiFinal2UserRanking]: {
         sessionKey: USER_RANKING_SESSIONS.semiFinal2UserRanking,
         title: 'Demi-Finale 2',
         participantCodes: semiFinal2Participants,
+        officialResultType: getOfficialResultType(
+            USER_RANKING_SESSIONS.semiFinal2UserRanking,
+        ),
     },
     [USER_RANKING_SESSIONS.finalUserRanking]: {
         sessionKey: USER_RANKING_SESSIONS.finalUserRanking,
         title: 'Grande Finale',
         participantCodes: finalParticipants,
+        officialResultType: getOfficialResultType(
+            USER_RANKING_SESSIONS.finalUserRanking,
+        ),
     },
 };
 

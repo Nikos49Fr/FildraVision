@@ -14,44 +14,110 @@ import {
     getIndividualResultsState,
     INDIVIDUAL_RESULTS_VIEW_KEYS,
 } from './IndividualResults.helpers';
+import { OFFICIAL_RESULT_TYPES } from '../../../utils/helpers/officialResults';
 
-function OfficialRankingPanel({ ranking, isPublished }) {
-    const title = isPublished
-        ? 'Classement officiel'
-        : 'Liste des participants';
+const QUALIFIED_LABEL = 'Qualifi\u00e9';
+const QUALIFIED_COUNTRIES_TITLE = 'Pays qualifi\u00e9s';
+const NON_QUALIFIED_COUNTRIES_TITLE = 'Pays non qualifi\u00e9s';
+const QUALIFICATION_WAITING_MESSAGE =
+    'Le concours individuel appara\u00eetra une fois que nous conna\u00eetrons les 10 pays qualifi\u00e9s.';
+const OFFICIAL_RANKING_WAITING_MESSAGE =
+    'Le concours individuel appara\u00eetra une fois le classement officiel publi\u00e9.';
+const COMMUNITY_WAITING_MESSAGE =
+    'Le classement communautaire n\u2019appara\u00eetra ici qu\u2019apr\u00e8s sa publication.';
+const VOTER_WAITING_MESSAGE =
+    'Choisis un votant pour afficher son d\u00e9tail.';
+const EMPTY_DETAIL_MESSAGE =
+    'Aucun d\u00e9tail disponible pour ce classement.';
+const LOADING_MESSAGE = 'Chargement des r\u00e9sultats en cours...';
+const LOAD_ERROR_MESSAGE =
+    'Impossible de charger le concours individuel pour l\u2019instant.';
 
-    return (
-        <section className="results__panel results__individualOfficialPanel">
-            <header className="results__panelHeader results__individualOfficialHeader">
-                <h2 className="results__panelTitle">{title}</h2>
-            </header>
+function OfficialRankingPanel({
+    ranking,
+    isPublished,
+    officialResultType,
+    qualifiedParticipantCodes,
+}) {
+    const qualifiedCodes = new Set(qualifiedParticipantCodes);
+    const isQualificationResult =
+        officialResultType === OFFICIAL_RESULT_TYPES.qualification;
+    const showOfficialHeader = !(isPublished && isQualificationResult);
+    const showOfficialPositions = isPublished && !isQualificationResult;
+    const qualifiedRanking = ranking.filter((participant) =>
+        qualifiedCodes.has(participant.code),
+    );
+    const nonQualifiedRanking = ranking.filter(
+        (participant) => !qualifiedCodes.has(participant.code),
+    );
+
+    function renderOfficialList(participants) {
+        return (
             <ol className="results__individualOfficialList">
-                {ranking.map((participant, index) => (
+                {participants.map((participant, index) => (
                     <li
                         key={participant.code}
                         className={`results__individualOfficialItem${
-                            !isPublished
+                            !showOfficialPositions
                                 ? ' results__individualOfficialItem--noPosition'
                                 : ''
                         }`}
                     >
-                        {isPublished ? (
+                        {showOfficialPositions ? (
                             <span className="results__individualOfficialPosition">
                                 {index + 1}
                             </span>
                         ) : null}
                         <div className="results__individualOfficialCard">
+                            {isPublished &&
+                            isQualificationResult &&
+                            qualifiedCodes.has(participant.code) ? (
+                                <span className="results__individualOfficialBadge">
+                                    {QUALIFIED_LABEL}
+                                </span>
+                            ) : null}
                             <IndividualResultsResponsiveCard country={participant} />
                         </div>
                     </li>
                 ))}
             </ol>
+        );
+    }
+
+    return (
+        <section className="results__panel results__individualOfficialPanel">
+            {showOfficialHeader ? (
+                <header className="results__panelHeader results__individualOfficialHeader">
+                    <h2 className="results__panelTitle">
+                        {isPublished ? 'Classement officiel' : 'Liste des participants'}
+                    </h2>
+                </header>
+            ) : null}
+            {isPublished && isQualificationResult ? (
+                <div className="results__individualOfficialGroups">
+                    <section className="results__individualOfficialGroup">
+                        <h2 className="results__panelTitle results__individualOfficialGroupTitle">
+                            {QUALIFIED_COUNTRIES_TITLE}
+                        </h2>
+                        {renderOfficialList(qualifiedRanking)}
+                    </section>
+                    <section className="results__individualOfficialGroup">
+                        <h2 className="results__panelTitle results__individualOfficialGroupTitle">
+                            {NON_QUALIFIED_COUNTRIES_TITLE}
+                        </h2>
+                        {renderOfficialList(nonQualifiedRanking)}
+                    </section>
+                </div>
+            ) : (
+                renderOfficialList(ranking)
+            )}
         </section>
     );
 }
 
 function IndividualResultsPanel({
     isOfficialRankingPublished,
+    officialResultType,
     isCommunityRankingPublished,
     voters,
     leaderboard,
@@ -72,8 +138,9 @@ function IndividualResultsPanel({
                 </header>
                 <div className="results__individualPlaceholder">
                     <p className="results__individualPlaceholderText">
-                        Le concours individuel apparaîtra une fois le classement
-                        officiel publié.
+                        {officialResultType === OFFICIAL_RESULT_TYPES.qualification
+                            ? QUALIFICATION_WAITING_MESSAGE
+                            : OFFICIAL_RANKING_WAITING_MESSAGE}
                     </p>
                 </div>
             </section>
@@ -106,19 +173,14 @@ function IndividualResultsPanel({
         !isCommunityRankingPublished
     ) {
         panelContent = (
-            <p className="results__emptyMessage">
-                Le classement communautaire n&apos;apparaîtra ici qu&apos;après sa
-                publication.
-            </p>
+            <p className="results__emptyMessage">{COMMUNITY_WAITING_MESSAGE}</p>
         );
     } else if (
         selectedViewKey === INDIVIDUAL_RESULTS_VIEW_KEYS.voter &&
         !selectedVoterId
     ) {
         panelContent = (
-            <p className="results__emptyMessage">
-                Choisis un votant pour afficher son détail.
-            </p>
+            <p className="results__emptyMessage">{VOTER_WAITING_MESSAGE}</p>
         );
     } else {
         panelContent = (
@@ -137,7 +199,7 @@ function IndividualResultsPanel({
                         : selectedDetailEntry?.displayName ?? ''
                 }
                 isCommunity={selectedDetailEntry?.isCommunity ?? false}
-                emptyMessage="Aucun détail disponible pour ce classement."
+                emptyMessage={EMPTY_DETAIL_MESSAGE}
             />
         );
     }
@@ -215,9 +277,7 @@ export default function IndividualResults({ selectedSessionKey }) {
                     return;
                 }
 
-                setErrorMessage(
-                    "Impossible de charger le concours individuel pour l'instant.",
-                );
+                setErrorMessage(LOAD_ERROR_MESSAGE);
                 console.error(error.message);
             } finally {
                 if (isMounted) {
@@ -237,6 +297,8 @@ export default function IndividualResults({ selectedSessionKey }) {
         officialRanking,
         voters,
         leaderboard,
+        qualifiedParticipantCodes,
+        officialResultType,
         isOfficialRankingPublished,
         isCommunityRankingPublished,
     } = useMemo(
@@ -286,7 +348,10 @@ export default function IndividualResults({ selectedSessionKey }) {
             return;
         }
 
-        if (!selectedVoterId || !voters.some((voter) => voter.userId === selectedVoterId)) {
+        if (
+            !selectedVoterId ||
+            !voters.some((voter) => voter.userId === selectedVoterId)
+        ) {
             setSelectedVoterId(preferredVoterId);
         }
     }, [preferredVoterId, selectedViewKey, selectedVoterId, voters]);
@@ -310,9 +375,7 @@ export default function IndividualResults({ selectedSessionKey }) {
 
     if (isLoading) {
         return (
-            <section className="results__messagePanel">
-                Chargement des résultats en cours...
-            </section>
+            <section className="results__messagePanel">{LOADING_MESSAGE}</section>
         );
     }
 
@@ -327,9 +390,12 @@ export default function IndividualResults({ selectedSessionKey }) {
             <OfficialRankingPanel
                 ranking={officialRanking}
                 isPublished={isOfficialRankingPublished}
+                officialResultType={officialResultType}
+                qualifiedParticipantCodes={qualifiedParticipantCodes}
             />
             <IndividualResultsPanel
                 isOfficialRankingPublished={isOfficialRankingPublished}
+                officialResultType={officialResultType}
                 isCommunityRankingPublished={isCommunityRankingPublished}
                 voters={voters}
                 leaderboard={leaderboard}
