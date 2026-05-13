@@ -6,6 +6,12 @@
     gap: 1vw;
     font-size: 16px;
 
+    &__actions {
+        display: flex;
+        align-items: stretch;
+        gap: 0.55rem;
+    }
+
     &__helper {
         font-weight: 500;
         text-align: center;
@@ -57,6 +63,12 @@
             transform: translateY(2px);
         }
 
+        &:disabled {
+            cursor: wait;
+            transform: none;
+            opacity: 0.8;
+        }
+
         &--empty {
             // background-color: #d9b11e;
             background-color: #2e9b57;
@@ -78,6 +90,91 @@
             background-color: #d64545;
             color: #fff;
         }
+
+        &--reset {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 3.25rem;
+            padding: 0.75vw 0.9vw;
+            background-color: #d64545;
+            color: #fff;
+        }
+    }
+
+    &__resetIcon {
+        width: 1.1rem;
+        height: 1.1rem;
+        display: block;
+        fill: currentColor;
+    }
+
+    &__modalOverlay {
+        position: fixed;
+        inset: 0;
+        z-index: 50;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        padding: 1rem;
+        background-color: rgb(17 17 17 / 0.72);
+    }
+
+    &__modal {
+        width: min(100%, 28rem);
+        background-color: #f4efe6;
+        color: #1b1b1b;
+        border-radius: 1rem;
+        padding: 1rem;
+        box-shadow: 0 18px 36px rgb(0 0 0 / 0.28);
+    }
+
+    &__modalTitle {
+        font-size: 1.05rem;
+        margin-bottom: 0.6rem;
+    }
+
+    &__modalText {
+        line-height: 1.45;
+        margin-bottom: 1rem;
+    }
+
+    &__modalActions {
+        display: flex;
+        gap: 0.75rem;
+    }
+
+    &__modalButton {
+        flex: 1 1 0;
+        border: 0;
+        border-radius: 0.85rem;
+        padding: 0.8rem 1rem;
+        font: inherit;
+        font-weight: 700;
+        cursor: pointer;
+        transition:
+            background-color 180ms ease-in-out,
+            color 180ms ease-in-out,
+            transform 180ms ease-in-out;
+
+        &:hover {
+            transform: translateY(1px);
+        }
+
+        &:focus-visible {
+            outline: 2px solid #000;
+            outline-offset: 3px;
+        }
+    }
+
+    &__modalButton--cancel {
+        background-color: #d8d2c8;
+        color: #1b1b1b;
+    }
+
+    &__modalButton--confirm {
+        background-color: #d64545;
+        color: #fff;
     }
 }
 
@@ -94,5 +191,27 @@
 @media (max-width: 768px) {
     .rankingSave {
         font-size: 10px;
+
+        &__actions {
+            gap: 0.4rem;
+        }
+
+        &__button--reset {
+            min-width: 2.8rem;
+        }
+
+        &__modalOverlay {
+            padding: 0.75rem;
+        }
+
+        &__modal {
+            width: 100%;
+            border-radius: 1rem 1rem 0 0;
+            padding: 1rem 0.95rem;
+        }
+
+        &__modalActions {
+            flex-direction: column-reverse;
+        }
     }
 }

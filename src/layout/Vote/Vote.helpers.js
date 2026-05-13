@@ -268,6 +268,14 @@ export function saveVoteBoardState(storageKey, boardState, tiers) {
     );
 }
 
+export function clearStoredVoteBoardState(storageKey) {
+    try {
+        localStorage.removeItem(storageKey);
+    } catch (error) {
+        console.error(error.message);
+    }
+}
+
 export function areSerializedVoteBoardStatesEqual(
     referenceBoardState,
     currentBoardState,

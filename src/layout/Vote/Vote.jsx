@@ -42,6 +42,8 @@ export default function Vote() {
         boardState: userRankingBoardState,
         handleBoardStateChange: handleUserRankingBoardStateChange,
         handleBoardStateSave: handleUserRankingSave,
+        handleBoardStateReset: handleUserRankingReset,
+        hasSavedRankingInDatabase,
         saveStatus: userRankingSaveStatus,
     } = useUserRanking({
         storageKey: resolvedVoteSessionConfig.storageKey,
@@ -120,6 +122,13 @@ export default function Vote() {
                             className="vote-classement__saveButton"
                             status={userRankingSaveStatus}
                             onClick={handleUserRankingSave}
+                            showResetAction={hasSavedRankingInDatabase}
+                            onReset={handleUserRankingReset}
+                            resetActionLabel="Réinitialiser mon vote"
+                            resetConfirmTitle="Réinitialiser ton vote ?"
+                            resetConfirmMessage="Cette action supprimera ton vote enregistré, effacera ton brouillon local et remettra les pays non classés dans l’ordre de passage."
+                            resetConfirmCancelLabel="Annuler"
+                            resetConfirmSubmitLabel="Oui, réinitialiser"
                         />
                     ) : null}
                 </header>

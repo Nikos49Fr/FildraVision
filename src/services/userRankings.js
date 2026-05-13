@@ -78,3 +78,24 @@ export async function saveUserRankingState(
         boardState: data.board_state ?? boardState,
     };
 }
+
+export async function deleteUserRankingState(sessionKey) {
+    const user = await getCurrentUser();
+
+    if (!user) {
+        throw new Error('Utilisateur non connecte.');
+    }
+
+    const supabase = requireSupabase();
+    const { error } = await supabase
+        .from(USER_RANKINGS_TABLE)
+        .delete()
+        .eq('user_id', user.id)
+        .eq('session_key', sessionKey);
+
+    if (error) {
+        throw error;
+    }
+
+    return true;
+}

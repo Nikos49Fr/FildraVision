@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { RANKING_SAVE_STATUSES } from '../../utils/helpers/rankingSaveStatus';
 import {
+    deleteUserRankingState,
     getUserRankingState,
     saveUserRankingState,
 } from '../../services/userRankings';
 import {
+    clearStoredVoteBoardState,
     getDefaultVoteBoardState,
     getStoredVoteBoardState,
     getVoteSaveStatus,
@@ -45,6 +47,10 @@ export default function useUserRanking({
     );
     const saveDatabaseRankingState = useCallback(
         (nextBoardState) => saveUserRankingState(sessionKey, nextBoardState),
+        [sessionKey],
+    );
+    const deleteDatabaseRankingState = useCallback(
+        () => deleteUserRankingState(sessionKey),
         [sessionKey],
     );
 
@@ -185,6 +191,34 @@ export default function useUserRanking({
         }
     }
 
+    async function handleBoardStateReset() {
+        if (!enabled || !databaseRankingCodes?.length) {
+            return;
+        }
+
+        clearStatusTimeout();
+        setSaveStatusOverride(RANKING_SAVE_STATUSES.saving);
+
+        try {
+            await deleteDatabaseRankingState();
+
+            const nextDefaultBoardState = getDefaultBoardState();
+            clearStoredVoteBoardState(storageKey);
+            setBoardState(nextDefaultBoardState);
+            setDatabaseRankingCodes(null);
+            setDatabaseBoardState(null);
+            setSaveStatusOverride(null);
+        } catch (error) {
+            console.error(error.message);
+            setSaveStatusOverride(RANKING_SAVE_STATUSES.error);
+
+            statusTimeoutRef.current = setTimeout(() => {
+                setSaveStatusOverride(null);
+                statusTimeoutRef.current = null;
+            }, 3000);
+        }
+    }
+
     const saveStatus =
         !enabled
             ? RANKING_SAVE_STATUSES.empty
@@ -200,6 +234,8 @@ export default function useUserRanking({
         boardState,
         handleBoardStateChange,
         handleBoardStateSave,
+        handleBoardStateReset,
+        hasSavedRankingInDatabase: Boolean(databaseRankingCodes?.length),
         saveStatus,
     };
 }
