@@ -15,17 +15,17 @@ const PARTICIPANTS = getIndividualParticipants('semi_final_1');
 
 describe('IndividualResults.helpers', () => {
     test('getPlacementScore applies the expected point scale', () => {
-        expect(getPlacementScore(0)).toBe(7);
-        expect(getPlacementScore(1)).toBe(4);
-        expect(getPlacementScore(2)).toBe(1);
-        expect(getPlacementScore(3)).toBe(1);
-        expect(getPlacementScore(4)).toBe(0);
+        expect(getPlacementScore(0)).toBe(12);
+        expect(getPlacementScore(1)).toBe(10);
+        expect(getPlacementScore(2)).toBe(6);
+        expect(getPlacementScore(3)).toBe(6);
+        expect(getPlacementScore(4)).toBe(1);
     });
 
     test('getPodiumBonus rewards only exact podium predictions', () => {
-        expect(getPodiumBonus(1, 1)).toBe(20);
-        expect(getPodiumBonus(2, 2)).toBe(16);
-        expect(getPodiumBonus(3, 3)).toBe(14);
+        expect(getPodiumBonus(1, 1)).toBe(48);
+        expect(getPodiumBonus(2, 2)).toBe(36);
+        expect(getPodiumBonus(3, 3)).toBe(24);
         expect(getPodiumBonus(1, 2)).toBe(0);
         expect(getPodiumBonus(4, 4)).toBe(0);
     });
@@ -46,21 +46,21 @@ describe('IndividualResults.helpers', () => {
 
         expect(breakdown[0]).toMatchObject({
             code: PARTICIPANTS[0].code,
-            placementPoints: 7,
-            podiumBonus: 20,
-            totalPoints: 27,
+            placementPoints: 12,
+            podiumBonus: 48,
+            totalPoints: 60,
         });
         expect(breakdown[1]).toMatchObject({
             code: PARTICIPANTS[2].code,
-            placementPoints: 4,
+            placementPoints: 10,
             podiumBonus: 0,
-            totalPoints: 4,
+            totalPoints: 10,
         });
         expect(breakdown[2]).toMatchObject({
             code: PARTICIPANTS[1].code,
-            placementPoints: 4,
+            placementPoints: 10,
             podiumBonus: 0,
-            totalPoints: 4,
+            totalPoints: 10,
         });
     });
 

@@ -27,7 +27,13 @@ export const INDIVIDUAL_RESULTS_VIEW_ITEMS = [
     },
 ];
 
-const PODIUM_BONUS_POINTS = [20, 16, 14];
+const FINAL_PODIUM_BONUS_POINTS = [48, 36, 24];
+const FINAL_PLACEMENT_POINTS = {
+    exact: 12,
+    oneOff: 10,
+    twoOrThreeOff: 6,
+    fourOrMoreOff: 1,
+};
 const QUALIFICATION_POINTS_BY_POSITION = [10, 9, 8, 7, 6, 5, 4, 3, 2, 1];
 
 function getParticipantsByCode() {
@@ -102,18 +108,18 @@ export function getIndividualRankingFromCodes(sessionKey, rankingCodes) {
 
 export function getPlacementScore(positionDelta) {
     if (positionDelta === 0) {
-        return 7;
+        return FINAL_PLACEMENT_POINTS.exact;
     }
 
     if (positionDelta === 1) {
-        return 4;
+        return FINAL_PLACEMENT_POINTS.oneOff;
     }
 
     if (positionDelta === 2 || positionDelta === 3) {
-        return 1;
+        return FINAL_PLACEMENT_POINTS.twoOrThreeOff;
     }
 
-    return 0;
+    return FINAL_PLACEMENT_POINTS.fourOrMoreOff;
 }
 
 export function getQualificationScore(predictedPosition, isQualified) {
@@ -129,7 +135,7 @@ export function getPodiumBonus(predictedPosition, officialPosition) {
         return 0;
     }
 
-    return PODIUM_BONUS_POINTS[officialPosition - 1] ?? 0;
+    return FINAL_PODIUM_BONUS_POINTS[officialPosition - 1] ?? 0;
 }
 
 export function buildIndividualRankingBreakdown(
