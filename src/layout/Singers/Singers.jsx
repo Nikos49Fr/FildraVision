@@ -33,11 +33,13 @@ export default function Singers() {
             final: finalParticipants,
         };
 
-        const allowedCodes = new Set(
-            participantCodesByFilter[selectedFilterKey] ?? []
+        const participantsByCode = new Map(
+            allParticipants.map((country) => [country.code, country]),
         );
 
-        return allParticipants.filter((country) => allowedCodes.has(country.code));
+        return (participantCodesByFilter[selectedFilterKey] ?? [])
+            .map((countryCode) => participantsByCode.get(countryCode))
+            .filter(Boolean);
     }, [selectedFilterKey]);
 
     return (
